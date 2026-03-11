@@ -1,0 +1,5 @@
+venv/
+venv
+.env
+gerar_embeddings_antigos.py
+gerar_medias.py

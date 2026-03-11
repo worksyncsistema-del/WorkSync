@@ -1,0 +1,140 @@
+// coloca a formatação dos pontos e traço no CPF
+function mascaraCPF(campo) {
+  let cpf = campo.value.replace(/\D/g, "");
+
+  if (cpf.length > 11) {
+    cpf = cpf.substring(0, 11);
+  }
+
+  cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2");
+  cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2");
+  cpf = cpf.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+
+  campo.value = cpf;
+}
+
+// alterna entre exibir/ocultar a senha
+function mostrarSenha() {
+  const campo = document.getElementById("senha");
+
+  if (campo.type === "password") {
+    campo.type = "text";
+  } else {
+    campo.type = "password";
+  }
+}
+
+// verifica se o CPF é válido
+function verificarCPF() {
+  let campoCPF = document.getElementById("cpf").value;
+  let soma = 0;
+  campoCPF = campoCPF.replace(/\D/g, ""); 
+  let CPF = campoCPF.split("").map(Number);
+
+  for (let i = 0; i <= 8; i++){
+    soma += CPF[i] * (10 - i);
+  }
+
+  let digito1 = soma % 11;
+
+  if (digito1 < 2) {
+    digito1 = 0;
+  } else {
+    digito1 = 11 - digito1;
+  }
+
+  soma = 0;
+
+   for (let i = 0; i <= 9; i++) {
+     soma += CPF[i] * (11 - i);
+  }
+  
+  let digito2 = soma % 11;
+
+  if (digito2 < 2) {
+    digito2 = 0;
+  } else {
+    digito2 = 11 - digito2;
+  }
+
+  if (digito1 == CPF[9] && digito2 == CPF[10]) {
+    return true;
+  } else {
+    window.alert("CPF inválido. Tente novamente.");
+    return false;
+  }
+}
+
+// acessa o sistema
+function login() {
+  const campoCPF = document.getElementById("cpf");
+  const campoSenha = document.getElementById("senha");
+
+  // 🔴 Campos vazios
+  if (campoCPF.value === "" || campoSenha.value === "") {
+    alert("Foram encontrados campos vazios. Tente novamente.");
+    return;
+  }
+
+  // 🔴 CPF inválido (sua função existente)
+  if (!verificarCPF()) {
+    return;
+  }
+
+  // 🟢 Remove tudo que não for número do CPF
+  const cpf = campoCPF.value.replace(/\D/g, "");
+
+  const senha = campoSenha.value;
+
+  // 🟢 Enviar para o backend Python
+  fetch("https://fabulous-reprieve-production-9728.up.railway.app/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      cpf: cpf,
+      senha: senha,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status === "ok") {
+        // ✅ Login válido
+        localStorage.setItem("usuarioNome", data.nome);
+        window.location.href = "menu.html";
+      } else {
+        // ❌ Login inválido
+        alert("CPF ou senha incorretos.");
+      }
+    })
+    .catch((error) => {
+      console.error("Erro:", error);
+      alert("Erro ao conectar com o servidor.");
+    });
+}
+
+
+// Inicializar EmailJS
+emailjs.init("j2V8vMJBNoT3bmpRt");
+
+function enviarEmail() {
+  const email = document.getElementById("email").value;
+
+  if (email.trim() === "") {
+    alert("Digite um email válido.");
+    return;
+  }
+
+  emailjs
+    .send("worksync_services", "template_0weu91p", {
+      to_email: email,
+    })
+    .then(function () {
+      alert("Email enviado com sucesso!");
+    })
+    .catch(function (error) {
+      alert("Erro ao enviar email.");
+      console.log(error);
+    });
+}

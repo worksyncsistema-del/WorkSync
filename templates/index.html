@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Reconhecimento Facial</title>
+</head>
+
+<body>
+
+    <h1>Reconhecimento Facial</h1>
+
+    <p>
+        Para a realização do reconhecimento facial, siga as orientações abaixo:<br><br>
+        • Posicione o rosto próximo à câmera.<br>
+        • Permaneça de frente para a câmera.<br>
+        • Esteja em um ambiente com iluminação adequada.<br>
+        • Não utilize acessórios que possam obstruir a visualização do rosto (boné, óculos, entre outros).
+    </p>
+
+    <button onclick="iniciarEReconhecer()">Bater Ponto</button>
+
+    <br><br>
+
+    <video id="video" width="400" autoplay></video>
+
+    <script>
+        const video = document.getElementById('video');
+
+        function iniciarEReconhecer() {
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+
+                    video.srcObject = stream;
+                    video.play();
+
+                    // Aguarda 2 segundos para estabilizar
+                    setTimeout(() => {
+
+                        const canvas = document.createElement("canvas");
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+
+                        const ctx = canvas.getContext("2d");
+                        ctx.drawImage(video, 0, 0);
+
+                        const imagem = canvas.toDataURL("image/jpeg");
+
+                        // 🔥 DESLIGA A CÂMERA IMEDIATAMENTE
+                        stream.getTracks().forEach(track => track.stop());
+                        video.srcObject = null;
+
+                        // envia para o servidor
+                        fetch("/reconhecer", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ imagem: imagem })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+
+                            if (data.erro) {
+                                alert(data.erro);
+                            } else {
+                                alert(
+                                    "Funcionário identificado: " +
+                                    data.nome +
+                                    "\nPonto registrado: " +
+                                    data.data_hora
+                                );
+                            }
+
+                        })
+                        .catch(error => {
+                            console.error("Erro no reconhecimento:", error);
+                            alert("Erro ao realizar reconhecimento.");
+                        });
+
+                    }, 2000);
+
+                })
+                .catch(error => {
+                    console.error("Erro ao acessar câmera:", error);
+                    alert("Não foi possível acessar a câmera.");
+                });
+        }
+    </script>
+
+</body>
+
+</html>

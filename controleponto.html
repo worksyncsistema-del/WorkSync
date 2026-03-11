@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Controle de Ponto</title>
+
+  <!-- Fonte Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- CSS da página -->
+  <link rel="stylesheet" href="css/controleponto.css">
+</head>
+
+<body>
+
+  <div class="controleponto">
+
+    <!-- TOPO / RESUMO -->
+    <section class="topo-ponto">
+
+      <div class="usuario">
+        <div class="foto"></div>
+
+        <div class="info">
+          <h2>João Pereira dos Santos</h2>
+          <span>Analista de Sistemas</span>
+        </div>
+      </div>
+
+      <div class="status-ponto">
+        <div class="card-status">
+          <span class="titulo-status">Último ponto</span>
+          <strong class="hora-status">11:31</strong>
+          <span class="data-status">10/05/2025</span>
+        </div>
+      
+        <div class="card-status proximo">
+          <span class="titulo-status">Próximo ponto</span>
+          <strong class="hora-status">Em 1h30</strong>
+          <span class="data-status">11/05/2025</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- REGISTROS DO DIA -->
+    <section class="registros-dia">
+      <div class="registro">Entrada<br><strong>08:00</strong></div>
+      <div class="registro">Saída intervalo<br><strong>11:30</strong></div>
+      <div class="registro">Volta intervalo<br><strong>13:00</strong></div>
+      <div class="registro">Saída<br><strong>17:00</strong></div>
+    </section>
+
+    <!-- FILTRO DE RELATÓRIO -->
+    <section class="filtro-relatorio">
+      <div class="filtro-box">
+    
+        <div class="campo-data">
+          <label>Início relatório</label>
+          <input type="date">
+        </div>
+    
+        <div class="campo-data">
+          <label>Final relatório</label>
+          <input type="date">
+        </div>
+
+        <div> <button> Pesquisar </button>
+        </div>
+    
+      </div>
+    </section>
+
+    <!-- TABELA -->
+    <section class="tabela-pontos">
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Jornada</th>
+            <th>Início</th>
+            <th>Início Interv.</th>
+            <th>Volta Interv.</th>
+            <th>Término</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Segunda</td>
+            <td>8h - 11:30 / 13h - 17h</td>
+            <td class="ok">08:00</td>
+            <td class="ok">11:30</td>
+            <td class="alerta">13:06</td>
+            <td class="ok">17:02</td>
+          </tr>
+
+          <tr>
+            <td>Terça</td>
+            <td>8h - 11:30 / 13h - 17h</td>
+            <td class="erro">08:12</td>
+            <td class="ok">11:34</td>
+            <td class="ok">13:00</td>
+            <td class="ok">17:01</td>
+          </tr>
+
+          <tr>
+            <td>Quarta</td>
+            <td>8h - 11:30 / 13h - 17h</td>
+            <td class="ok">08:00</td>
+            <td class="ok">11:30</td>
+            <td class="alerta">13:06</td>
+            <td class="ok">17:02</td>
+          </tr>
+
+          <tr>
+            <td>Quinta</td>
+            <td>8h - 11:30 / 13h - 17h</td>
+            <td class="erro">08:12</td>
+            <td class="ok">11:34</td>
+            <td class="ok">13:00</td>
+            <td class="ok">17:01</td>
+          </tr>
+
+          <tr>
+            <td>Sexta</td>
+            <td>8h - 11:30 / 13h - 17h</td>
+            <td class="ok">08:00</td>
+            <td class="ok">11:30</td>
+            <td class="alerta">13:06</td>
+            <td class="ok">17:02</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+
+</body>
+</html>

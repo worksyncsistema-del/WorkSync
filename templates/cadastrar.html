@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cadastrar Rosto</title>
+</head>
+
+<body>
+
+<h1>Cadastro de Funcionário</h1>
+
+<input type="text" id="nome" placeholder="Digite o nome">
+
+<br><br>
+
+<button onclick="iniciarCamera()">Abrir Câmera</button>
+<button onclick="capturar()">Capturar Foto</button>
+
+<br><br>
+
+<video id="video" width="400" autoplay></video>
+
+<br><br>
+
+<script>
+
+let stream;
+const video = document.getElementById("video");
+
+function iniciarCamera(){
+
+    navigator.mediaDevices.getUserMedia({ video:true })
+    .then(s => {
+
+        stream = s;
+        video.srcObject = stream;
+
+    })
+    .catch(err => {
+
+        alert("Erro ao acessar câmera");
+        console.error(err);
+
+    });
+}
+
+function capturar(){
+
+    const nome = document.getElementById("nome").value;
+
+    if(!nome){
+        alert("Digite o nome");
+        return;
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video,0,0);
+
+    const imagem = canvas.toDataURL("image/jpeg");
+
+    fetch("/salvar_cadastro",{
+
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            nome:nome,
+            imagem:imagem
+        })
+
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        alert(data.mensagem || data.erro);
+
+    })
+    .catch(err => {
+
+        console.error(err);
+        alert("Erro ao cadastrar");
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>

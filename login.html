@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>WorkSync | Login</title>
+  <link rel="stylesheet" href="css/login.css">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+  <div class="login-container">
+
+    <div class="login-header"> 
+      <spam>WORK</spam>SYNC 
+    </div>
+
+    <div class="login-body">
+      <input type="text" id="cpf" placeholder="CPF" maxlength="14" oninput="mascaraCPF(this)">
+	  
+    <div class="password-box">
+	   <input type="password" id="senha" maxlength="20" placeholder="Senha">
+		
+  <span class="toggle" onclick="mostrarSenha()">
+  <svg width="20" height="20" viewBox="0 0 24 24">
+    <path d="M12 5c-7 0-11 7-11 7s4 7 11 7 11-7 11-7-4-7-11-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/>
+  </svg>
+</span>
+
+</div>
+
+      <button onclick="login()">Entrar</button>
+      <a class="senha" href="recup.html">Esqueci minha senha?</a>
+    </div>
+
+  </div>
+
+  <footer>
+    Copyright WorkSync © 2026
+  </footer>
+
+  <script src="js/login.js"></script>
+</body>
+</html>
+

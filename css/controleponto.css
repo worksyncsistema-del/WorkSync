@@ -1,0 +1,228 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+.controleponto {
+  font-family: Montserrat;
+    padding: 20px 20px 30px 20px;
+}
+
+/* TOPO */
+.topo-ponto {
+    font-family: Montserrat;
+    background: #fff;
+    padding: 20px 20px 30px 20px;
+    margin-bottom: 25px;
+    border-radius: 6px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    gap: 24px;
+    display: flex;
+    align-items: center;
+  }
+
+.usuario {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.foto {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #ccc;
+}
+
+.info h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.info span {
+  font-size: 18px;
+  color: #555;
+}
+
+.status-ponto {
+  display: flex;
+  gap: 12px;
+  margin-left: auto; /* 🔥 ISSO joga os dois cards pra direita */
+}
+
+.card-status {
+  background: #f2f2f2;
+  padding: 18px 22px;
+  border-radius: 10px;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-status.proximo {
+  background: #ccc;
+}
+
+.titulo-status {
+  font-size: 13px;
+  color: #000;
+  font-weight: 500;
+}
+
+.hora-status {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.data-status {
+  font-size: 12px;
+  color: #000;
+} 
+
+/* REGISTROS */
+.registros-dia {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  font-size: 18px;
+  margin-bottom: 24px;
+}
+
+.registro {
+  background: #ffffff;
+  padding: 16px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  border-radius: 6px;
+}
+
+.filtro-relatorio {
+  display: flex;
+  justify-content: center; /* 🔥 centraliza no meio da tela */
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.filtro-box {
+  display: flex;
+  gap: 20px;
+  background: #ffffff;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+  width: fit-content;
+}
+
+.filtro-relatorio label {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+/* Cada campo */
+.campo-data {
+  display: flex;
+  flex-direction: column;
+  font-family: Montserrat;
+}
+
+/* Label */
+.campo-data label {
+  font-size: 18px;
+  color: #000;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+/* Input date */
+.campo-data input[type="date"] {
+  padding: 8px 10px;
+  font-family: Montserrat;
+  font-size: 14px;
+  border: 1px solid #cfd8dc;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  color: #111;
+  cursor: pointer;
+}
+
+/* Foco */
+.campo-data input[type="date"]:focus {
+  outline: none;
+  border-color: #0F5C8C;
+  box-shadow: 0 0 0 2px rgba(15, 92, 140, 0.15);
+}
+
+/* Ícone do calendário (Chrome / Edge) */
+.campo-data input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(25%) sepia(100%) saturate(400%) hue-rotate(175deg);
+  cursor: pointer;
+}
+
+
+
+.filtro-relatorio input {
+  padding: 6px;
+}
+
+/* TABELA */
+.tabela-pontos table {
+  width: 100%;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tabela-pontos th,
+.tabela-pontos td {
+  font-size: 18px;
+  padding: 12px;
+  table-layout: fixed;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.tabela-pontos th {
+  background: #1f6fa3;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* CORES STATUS */
+.ok {
+  background: #b7f0d0;
+}
+
+.alerta {
+  background: #ffe69a;
+}
+
+.erro {
+  background: #ffb3b3;
+}
+/* Data */
+.tabela-pontos th:nth-child(1),
+.tabela-pontos td:nth-child(1) {
+  width: 15%;
+}
+
+/* Jornada */
+.tabela-pontos th:nth-child(2),
+.tabela-pontos td:nth-child(2) {
+  width: 25%;
+}
+
+/* Horários (todos iguais) */
+.tabela-pontos th:nth-child(3),
+.tabela-pontos th:nth-child(4),
+.tabela-pontos th:nth-child(5),
+.tabela-pontos th:nth-child(6),
+.tabela-pontos td:nth-child(3),
+.tabela-pontos td:nth-child(4),
+.tabela-pontos td:nth-child(5),
+.tabela-pontos td:nth-child(6) {
+  width: 15%;
+}

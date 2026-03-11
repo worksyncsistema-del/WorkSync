@@ -1,0 +1,118 @@
+
+* { /* pagina inteira */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat';
+}
+
+.topbar { /* barra do topo */
+  height: 90px;
+  background: #0F5C8C;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+#relogio {
+  color: white;
+  text-align: right;
+  line-height: 1.2;
+}
+
+#hora {
+  font-size: 26px;
+  font-weight: bold;
+}
+
+#data {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.status-expediente {
+  color: #4CAF50;
+}
+
+.status-intervalo {
+  color: #FFC107;
+}
+
+.status-fora {
+  color: #F44336;
+}
+
+#nomeUsuario {
+  color: white;
+  font-weight: 600;
+  margin-left: 15px;
+}
+
+#status {
+  font-weight: 600;
+  color: white;
+}
+
+spam { /* cor preta do WORKsync */
+	color: black;
+}
+.logo { /* worksync do topo */
+	font-family: montserrat;
+	color: white;
+  font-weight: bold;
+  font-size: 40px;
+}
+
+.layout { /* div principal com tudo */
+  display: flex;
+  height: calc(100vh - 60px);
+}
+
+.sidebar { /* barra lateral */
+  width: 250px;
+ background: #E0E0E0;
+}
+
+.sidebar ul { /* estilo da lista da barra lateral */
+  list-style: none;
+}
+
+.sidebar li { /* espacamento da barra lateral */
+  padding: 13px 20px;
+}
+
+.sidebar a { /* texto ancora da barra lateral */
+  text-decoration: none;
+  color: #000;
+  font-weight: 500;
+  font-size: 18px;
+  display: block;
+}
+
+.sidebar li:hover { /* hover da barra lateral */
+  background: #ccc; 
+}
+
+.sidebar .active { /* clicar na barra lateral */
+	font-family: montserrat;
+  background: #ffffff;
+  border-left: 4px solid #0C4A70;
+}
+
+.divider { /* divisor das linhas barra lateral */
+  height: 1px;
+  background: #ccc;
+  margin: 10px 0;
+}
+
+.content { /* centro da tela */
+  flex: 1;
+  background: #F2F2F2;
+}
+.iframe-content { /* iframe dentro do content */
+  width: 100%;
+  height: 100%;
+  border: none;
+}
