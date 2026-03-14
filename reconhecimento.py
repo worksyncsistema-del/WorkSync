@@ -6,9 +6,11 @@ import base64
 import os
 import mysql.connector
 from datetime import datetime
+import uuid
 import json
 import numpy as np
 from dotenv import load_dotenv
+import cv2
 
 load_dotenv()
 
@@ -39,46 +41,8 @@ def conectar():
 # CARREGAR MODELO
 # =========================
 print("Carregando modelo...")
-DeepFace.build_model("Facenet512")
+DeepFace.build_model("Facenet")
 print("Modelo carregado!")
-
-# =========================
-# CALCULAR MÉDIA DOS EMBEDDINGS
-# =========================
-def atualizar_embedding_medio(nome):
-
-    conexao = conectar()
-    cursor = conexao.cursor(dictionary=True)
-
-    cursor.execute(
-        "SELECT embedding FROM fotos WHERE nome = %s AND embedding IS NOT NULL",
-        (nome,)
-    )
-
-    dados = cursor.fetchall()
-
-    embeddings = []
-
-    for d in dados:
-        embeddings.append(np.array(json.loads(d["embedding"])))
-
-    if len(embeddings) == 0:
-        return
-
-    media = np.mean(embeddings, axis=0)
-
-    embedding_json = json.dumps(media.tolist())
-
-    cursor.execute("""
-    INSERT INTO pessoas_embeddings (nome, embedding)
-    VALUES (%s, %s)
-    ON DUPLICATE KEY UPDATE embedding = %s
-    """, (nome, embedding_json, embedding_json))
-
-    conexao.commit()
-
-    cursor.close()
-    conexao.close()
 
 # =========================
 # ROTAS
@@ -97,74 +61,96 @@ def pagina_cadastro():
 @app.route('/salvar_cadastro', methods=['POST'])
 def salvar_cadastro():
 
-    dados = request.get_json()
+    try:
 
-    nome = dados.get('nome')
-    imagem = dados.get('imagem')
+        dados = request.get_json()
+        nome = dados.get('nome')
+        imagem = dados.get('imagem')
 
-    if not nome or not imagem:
-        return jsonify({"mensagem": "Dados inválidos!"})
+        if not nome or not imagem:
+            return jsonify({"erro": "Dados inválidos!"})
 
-    nome = nome.strip().title()
+        nome = nome.strip().title()
 
-    if "," in imagem:
-        imagem = imagem.split(",")[1]
+        if "," in imagem:
+            imagem = imagem.split(",")[1]
 
-    imagem_bytes = base64.b64decode(imagem)
+        imagem_bytes = base64.b64decode(imagem)
 
-    conexao = conectar()
-    cursor = conexao.cursor()
+        temp_path = f"{uuid.uuid4()}.jpg"
 
-    cursor.execute("SELECT COUNT(*) FROM fotos WHERE nome = %s", (nome,))
-    numero_fotos = cursor.fetchone()[0]
+        with open(temp_path, "wb") as f:
+            f.write(imagem_bytes)
 
-    if numero_fotos >= 5:
+        img = cv2.imread(temp_path)
+
+        if img is None:
+            os.remove(temp_path)
+            return jsonify({"erro": "Erro ao ler imagem"})
+
+        img = cv2.resize(img, (640, 480))
+        cv2.imwrite(temp_path, img)
+
+        conexao = conectar()
+        cursor = conexao.cursor()
+
+        cursor.execute("SELECT COUNT(*) FROM fotos WHERE nome = %s", (nome,))
+        numero_fotos = cursor.fetchone()[0]
+
+        if numero_fotos >= 5:
+
+            cursor.close()
+            conexao.close()
+            os.remove(temp_path)
+
+            return jsonify({
+                "mensagem": "Limite de 5 fotos atingido!",
+                "bloqueado": True
+            })
+
+        numero_fotos += 1
+
+        upload = cloudinary.uploader.upload(
+            temp_path,
+            folder=f"rostos/{nome}",
+            public_id=str(numero_fotos),
+            overwrite=True
+        )
+
+        url_imagem = upload["secure_url"]
+
+        embedding = DeepFace.represent(
+            img_path=temp_path,
+            model_name="Facenet",
+            detector_backend="opencv",
+            enforce_detection=False
+        )[0]["embedding"]
+
+        embedding = np.array(embedding)
+
+        # normalizar embedding
+        embedding = embedding / np.linalg.norm(embedding)
+
+        embedding_json = json.dumps(list(embedding))
+
+        cursor.execute(
+            "INSERT INTO fotos (nome, url, embedding) VALUES (%s, %s, %s)",
+            (nome, url_imagem, embedding_json)
+        )
+
+        conexao.commit()
 
         cursor.close()
         conexao.close()
 
+        os.remove(temp_path)
+
         return jsonify({
-            "mensagem": "Limite de 5 fotos atingido!",
-            "bloqueado": True
+            "mensagem": f"Foto {numero_fotos}/5 cadastrada!"
         })
 
-    numero_fotos += 1
-
-    upload = cloudinary.uploader.upload(
-        imagem_bytes,
-        folder=f"rostos/{nome}",
-        public_id=str(numero_fotos),
-        overwrite=True
-    )
-
-    url_imagem = upload["secure_url"]
-
-    # gerar embedding
-    embedding = DeepFace.represent(
-        img_path=url_imagem,
-        model_name="Facenet512",
-        detector_backend="retinaface",
-        enforce_detection=False
-    )[0]["embedding"]
-
-    embedding_json = json.dumps(embedding)
-
-    cursor.execute(
-        "INSERT INTO fotos (nome, url, embedding) VALUES (%s, %s, %s)",
-        (nome, url_imagem, embedding_json)
-    )
-
-    conexao.commit()
-
-    cursor.close()
-    conexao.close()
-
-    # atualizar média da pessoa
-    atualizar_embedding_medio(nome)
-
-    return jsonify({
-        "mensagem": f"Foto {numero_fotos}/5 cadastrada!"
-    })
+    except Exception as e:
+        return jsonify({"erro": str(e)})
 
 # =========================
 # RECONHECER
@@ -172,43 +158,72 @@ def salvar_cadastro():
 @app.route('/reconhecer', methods=['POST'])
 def reconhecer():
 
-    dados = request.get_json()
-    imagem = dados.get('imagem')
-
-    if not imagem:
-        return jsonify({"erro": "Imagem inválida!"})
-
-    if "," in imagem:
-        imagem = imagem.split(",")[1]
-
-    imagem_bytes = base64.b64decode(imagem)
-
-    temp_path = "temp.jpg"
-
-    with open(temp_path, "wb") as f:
-        f.write(imagem_bytes)
-
     try:
 
+        dados = request.get_json()
+        imagem = dados.get('imagem')
+
+        if not imagem:
+            return jsonify({"erro": "Imagem inválida!"})
+
+        if "," in imagem:
+            imagem = imagem.split(",")[1]
+
+        imagem_bytes = base64.b64decode(imagem)
+
+        temp_path = f"{uuid.uuid4()}.jpg"
+
+        with open(temp_path, "wb") as f:
+            f.write(imagem_bytes)
+
+        img = cv2.imread(temp_path)
+
+        if img is None:
+            os.remove(temp_path)
+            return jsonify({"erro": "Erro ao ler imagem"})
+
+        img = cv2.resize(img, (640, 480))
+        cv2.imwrite(temp_path, img)
+
+
+        # VERIFICAR SE EXISTE ROSTO
+        faces = DeepFace.extract_faces(
+            img_path=temp_path,
+            detector_backend="opencv",
+            enforce_detection=False
+        )
+
+        if len(faces) == 0:
+            os.remove(temp_path)
+            return jsonify({"erro": "Nenhum rosto detectado"})
+
+        # verificar confiança
+        if faces[0]["confidence"] < 0.90:
+            os.remove(temp_path)
+            return jsonify({"erro": "Rosto não confiável"})
+        
         embedding_input = DeepFace.represent(
             img_path=temp_path,
-            model_name="Facenet512",
-            detector_backend="retinaface",
+            model_name="Facenet",
+            detector_backend="opencv",
             enforce_detection=False
         )[0]["embedding"]
 
         embedding_input = np.array(embedding_input)
 
+        # normalizar embedding
+        embedding_input = embedding_input / np.linalg.norm(embedding_input)
+
         conexao = conectar()
         cursor = conexao.cursor(dictionary=True)
 
-        cursor.execute("SELECT nome, embedding FROM pessoas_embeddings")
-        dados = cursor.fetchall()
+        cursor.execute("SELECT nome, embedding FROM fotos")
+        pessoas = cursor.fetchall()
 
         melhor_nome = None
         menor_distancia = 999
 
-        for pessoa in dados:
+        for pessoa in pessoas:
 
             embedding_db = np.array(json.loads(pessoa["embedding"]))
 
@@ -218,7 +233,9 @@ def reconhecer():
                 menor_distancia = distancia
                 melhor_nome = pessoa["nome"]
 
-        if melhor_nome and menor_distancia < 10:
+        print("Distância encontrada:", menor_distancia)
+
+        if melhor_nome and menor_distancia < 0.9:
 
             agora = datetime.now()
 
@@ -241,21 +258,20 @@ def reconhecer():
             cursor.close()
             conexao.close()
 
+            os.remove(temp_path)
+
             return jsonify({
                 "nome": melhor_nome,
                 "data_hora": agora.strftime("%d/%m/%Y %H:%M:%S")
             })
 
         else:
+
+            os.remove(temp_path)
             return jsonify({"erro": "Rosto não reconhecido!"})
 
     except Exception as e:
         return jsonify({"erro": str(e)})
-
-    finally:
-
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
 
 # =========================
 # INICIAR
