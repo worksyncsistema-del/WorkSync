@@ -1,4 +1,8 @@
 flask
 flask-cors
+deepface
+cloudinary
 mysql-connector-python
-datetime
+python-dotenv
+opencv-python
+numpy
