@@ -1,4 +1,5 @@
-body { /* pagina inteira */
+body {
+  /* pagina inteira */
   font-family: montserrat;
   background: #F2F2F2;
   margin: 0;
@@ -10,16 +11,19 @@ body { /* pagina inteira */
   align-items: center;
 }
 
-.login-container { 
+.login-container {
   width: 450px;
   background: #fff;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
 }
-spam { /* cor preta do WORKsync */
-	color: black;
+
+spam {
+  /* cor preta do WORKsync */
+  color: black;
 }
+
 .login-header {
   font-family: montserrat;
   background: #0F5C8C;
@@ -62,7 +66,8 @@ spam { /* cor preta do WORKsync */
   cursor: pointer;
   height: 25%;
   width: 100%;
-  margin-top: 3px; /* espaço entre os campos e o botão */
+  margin-top: 3px;
+  /* espaço entre os campos e o botão */
 }
 
 .login-body button:hover {
@@ -86,6 +91,7 @@ footer {
   font-size: 12px;
   color: #999;
 }
+
 .login-body input,
 .login-body button {
   box-sizing: border-box;
@@ -94,12 +100,15 @@ footer {
 .login-body h3 {
   font-size: 22px;
   font-weight: 600;
-  margin-bottom: 5px; /* aproxima do texto */
+  margin-bottom: 5px;
+  /* aproxima do texto */
 }
 
 .login-body label {
-  margin-top: 5px; /* aproxima do título */
+  margin-top: 5px;
+  /* aproxima do título */
 }
+
 .senha-requisitos {
   text-align: left;
   font-size: 15px;
@@ -109,7 +118,7 @@ footer {
 .senha-requisitos ul {
   padding-left: 18px;
   margin-top: 5px;
-    margin-bottom: 6px;
+  margin-bottom: 6px;
 }
 
 .senha-requisitos li {
@@ -148,6 +157,7 @@ footer {
   border-radius: 4px;
   transition: width 0.3s, background 0.3s;
 }
+
 input.erro {
   border: 1px solid red;
 }
@@ -155,6 +165,7 @@ input.erro {
 input.ok {
   border: 1px solid #1db954;
 }
+
 .erro-senha {
   margin-top: 2px;
   font-size: 16px;
@@ -173,7 +184,7 @@ input.ok {
 .toggle {
   position: absolute;
   right: 12px;
-  top: 55%;
+  top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
 }
@@ -184,6 +195,12 @@ input.ok {
   fill: #777;
 }
 
-.toggle:hover .eye {
-  fill: #0F5C8C;
+.eye-slash {
+  stroke: #777;
+  stroke-width: 2;
+  display: none;
+}
+
+.toggle.show .eye-slash {
+  display: block;
 }

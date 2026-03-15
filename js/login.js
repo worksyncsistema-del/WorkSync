@@ -138,3 +138,18 @@ function enviarEmail() {
       console.log(error);
     });
 }
+
+function toggleSenha(el){
+
+  const box = el.closest(".password-box");
+  const input = box.querySelector("input");
+
+  if(input.type === "password"){
+    input.type = "text";
+    el.classList.remove("show"); // visível = sem risco
+  }else{
+    input.type = "password";
+    el.classList.add("show"); // oculto = olho riscado
+  }
+
+}

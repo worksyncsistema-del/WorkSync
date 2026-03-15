@@ -24,11 +24,12 @@
       <input type="text" id="cpf" placeholder="CPF" maxlength="14" oninput="mascaraCPF(this)">
 
       <div class="password-box">
-        <input type="password" id="senha" maxlength="20" placeholder="Senha">
+        <input type="password" id="senha" maxlength="12" placeholder="Senha">
 
-        <span class="toggle" onclick="mostrarSenha()">
-          <svg width="20" height="20" viewBox="0 0 24 24">
-            <path d="M12 5c-7 0-11 7-11 7s4 7 11 7 11-7 11-7-4-7-11-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" />
+        <span class="toggle show" onclick="toggleSenha(this)">
+          <svg class="eye" viewBox="0 0 24 24">
+            <path d="M12 5C5 5 1 12 1 12s4 7 11 7 11-7 11-7-4-7-11-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+            <line class="eye-slash" x1="3" y1="3" x2="21" y2="21" />
           </svg>
         </span>
 

@@ -63,12 +63,17 @@ function validarConfirmacao() {
     erro.style.display = "block";
   }
 }
-function toggleSenha(el) {
-  const input = el.previousElementSibling;
+function toggleSenha(el){
 
-  if (input.type === "password") {
+  const box = el.closest(".password-box");
+  const input = box.querySelector("input");
+
+  if(input.type === "password"){
     input.type = "text";
-  } else {
+    el.classList.remove("show"); // visível = sem risco
+  }else{
     input.type = "password";
+    el.classList.add("show"); // oculto = olho riscado
   }
+
 }

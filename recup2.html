@@ -25,10 +25,10 @@
       <h3> Nova senha: </h3>
       <div class="password-box">
         <input type="password" id="novaSenha" placeholder="Nova senha" maxlength="12" oninput="validarSenha()">
-
-        <span class="toggle" onclick="toggleSenha(this)">
+        <span class="toggle show" onclick="toggleSenha(this)">
           <svg class="eye" viewBox="0 0 24 24">
-            <path d="M12 5C5 5 1 12 1 12s4 7 11 7 11-7 11-7-4-7-11-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" />
+            <path d="M12 5C5 5 1 12 1 12s4 7 11 7 11-7 11-7-4-7-11-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8" />
+            <line class="eye-slash" x1="3" y1="3" x2="21" y2="21" />
           </svg>
         </span>
       </div>
@@ -49,13 +49,13 @@
       </div>
 
       <div class="password-box">
-        <input type="password" id="confirmarSenha" placeholder="Confirmar nova senha" maxlength="12" oninput="validarConfirmacao()">
+        <input type="password" id="confirmarSenha" placeholder="Confirmar nova senha" maxlength="12"
+          oninput="validarConfirmacao()">
 
-        <span class="toggle" onclick="toggleSenha(this)">
-          <svg class="eye" viewBox="0 0 24 24">
+        <span class="toggle" onclick="toggleSenha(this)"> <svg class="eye" viewBox="0 0 24 24">
             <path d="M12 5C5 5 1 12 1 12s4 7 11 7 11-7 11-7-4-7-11-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" />
-          </svg>
-        </span>
+            <line class="eye-slash" x1="3" y1="3" x2="21" y2="21" />
+          </svg> </span>
       </div>
 
       <p id="erroSenha" class="erro-senha" style="display:none;">
