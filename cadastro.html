@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Meu Perfil</title>
@@ -11,6 +12,7 @@
 
   <link rel="stylesheet" href="css/cadastro.css">
 </head>
+
 <body>
 
   <div class="perfil-page">
@@ -47,317 +49,327 @@
 
     <!-- DADOS DO TRABALHADOR -->
     <section class="card">
-  <h3>Dados do Trabalhador</h3>
+      <h3>Dados do Trabalhador</h3>
 
-  <div class="grid">
+      <div class="grid">
 
-    <div class="campo">
-      <label>Cargo</label>
-      <select>
-        <option value="">Selecione</option>
-        <option>Analista</option>
-        <option>Assistente</option>
-        <option>Gerente</option>
-        <option>Coordenador</option>
-      </select>
-    </div>
+        <div class="campo">
+          <label>Cargo</label>
+          <select>
+            <option value="">Selecione</option>
+            <option>Analista</option>
+            <option>Assistente</option>
+            <option>Gerente</option>
+            <option>Coordenador</option>
+          </select>
+        </div>
 
-    <div class="campo">
-      <label>Setor</label>
-      <select>
-        <option value="">Selecione</option>
-        <option>RH</option>
-        <option>Financeiro</option>
-        <option>TI</option>
-        <option>Comercial</option>
-      </select>
-    </div>
+        <div class="campo">
+          <label>Setor</label>
+          <select>
+            <option value="">Selecione</option>
+            <option>RH</option>
+            <option>Financeiro</option>
+            <option>TI</option>
+            <option>Comercial</option>
+          </select>
+        </div>
 
-    <div class="campo">
-      <label>Tipo de perfil</label>
-      <select>
-        <option value="">Selecione</option>
-        <option>Administrador</option>
-        <option>Gestor</option>
-        <option>Colaborador</option>
-      </select>
-    </div>
+        <div class="campo">
+          <label>Tipo de perfil</label>
+          <select>
+            <option value="">Selecione</option>
+            <option>Administrador</option>
+            <option>Gestor</option>
+            <option>Colaborador</option>
+          </select>
+        </div>
 
-    <div class="campo">
-      <label>Tipo de contrato</label>
-      <select>
-        <option value="">Selecione</option>
-        <option>CLT</option>
-        <option>PJ</option>
-        <option>Estágio</option>
-        <option>Temporário</option>
-      </select>
-    </div>
+        <div class="campo">
+          <label>Tipo de contrato</label>
+          <select>
+            <option value="">Selecione</option>
+            <option>CLT</option>
+            <option>PJ</option>
+            <option>Estágio</option>
+            <option>Temporário</option>
+          </select>
+        </div>
 
-    <div class="campo">
-      <label>Data de admissão</label>
-      <input type="date">
-    </div>
+        <div class="campo">
+          <label>Data de admissão</label>
+          <input type="date">
+        </div>
 
-    <div class="campo">
-      <label>Carga horária semanal</label>
-      <input type="text">
-    </div>
+        <div class="campo">
+          <label>Carga horária semanal</label>
+          <input type="text">
+        </div>
+
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Jornada Semanal</h3>
+
+      <!-- Tipo de jornada -->
+      <div class="campo">
+        <label>Tipo de jornada</label>
+        <select id="tipoJornada" onchange="alternarJornada()">
+          <option value="padrao">Jornada padronizada</option>
+          <option value="manual">Edição manual</option>
+        </select>
+      </div>
+
+      <!-- JORNADA PADRONIZADA -->
+      <div id="jornadaPadrao">
+
+        <div class="dias-semana">
+          <label><input type="checkbox"> Domingo</label>
+          <label><input type="checkbox"> Segunda</label>
+          <label><input type="checkbox"> Terça</label>
+          <label><input type="checkbox"> Quarta</label>
+          <label><input type="checkbox"> Quinta</label>
+          <label><input type="checkbox"> Sexta</label>
+          <label><input type="checkbox"> Sábado</label>
+        </div>
+
+        <div class="horario-padrao">
+
+          <div class="campo">
+            <label>início - Expediente</label>
+            <input type="time">
+          </div>
+
+          <div class="campo">
+            <label>início - Intervalo </label>
+            <input type="time">
+          </div>
+
+          <div class="campo">
+            <label>Término - Intervalo </label>
+            <input type="time">
+          </div>
+
+          <div class="campo">
+            <label>Término - Expediente </label>
+            <input type="time">
+          </div>
+
+        </div>
+
+      </div>
+
+      <div id="jornadaManual" style="display:none;">
+
+        <!-- Seleção de dias -->
+        <div class="dias-semana">
+          <label><input type="checkbox" onchange="toggleDia('domingo')"> Domingo</label>
+          <label><input type="checkbox" onchange="toggleDia('segunda')"> Segunda</label>
+          <label><input type="checkbox" onchange="toggleDia('terca')"> Terça</label>
+          <label><input type="checkbox" onchange="toggleDia('quarta')"> Quarta</label>
+          <label><input type="checkbox" onchange="toggleDia('quinta')"> Quinta</label>
+          <label><input type="checkbox" onchange="toggleDia('sexta')"> Sexta</label>
+          <label><input type="checkbox" onchange="toggleDia('sabado')"> Sábado</label>
+        </div>
+        <hr>
+
+        <!-- Dias (mesmo layout do padrão) -->
+
+        <div id="domingo" class="dia-manual" style="display:none;">
+          <h4>Domingo</h4>
+          <div class="horario-padrao">
+            <div class="campo">
+              <label>Início - Expediente</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Início - Intervalo</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Término - Intervalo</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Término - Expediente</label>
+              <input type="time">
+            </div>
+          </div>
+          <br>
+          <hr>
+        </div>
+        <div id="segunda" class="dia-manual" style="display:none;">
+          <h4>Segunda</h4>
+          <div class="horario-padrao">
+            <div class="campo">
+              <label>Início - Expediente</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Início - Intervalo</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Término - Intervalo</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Término - Expediente</label>
+              <input type="time">
+            </div>
+          </div> <br>
+          <hr>
+        </div>
+        <div id="terca" class="dia-manual" style="display:none;">
+          <h4>Terça</h4>
+          <div class="horario-padrao">
+            <div class="campo">
+              <label>Início - Expediente</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Início - Intervalo</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Término - Intervalo</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Término - Expediente</label>
+              <input type="time">
+            </div>
+          </div> <br>
+          <hr>
+        </div>
+        <div id="quarta" class="dia-manual" style="display:none;">
+          <h4>Quarta</h4>
+          <div class="horario-padrao">
+            <div class="campo">
+              <label>Início - Expediente</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Início - Intervalo</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Término - Intervalo</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Término - Expediente</label>
+              <input type="time">
+            </div>
+          </div> <br>
+          <hr>
+        </div>
+
+        <div id="quinta" class="dia-manual" style="display:none;">
+          <h4>Quinta</h4>
+          <div class="horario-padrao">
+            <div class="campo">
+              <label>Início - Expediente</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Início - Intervalo</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Término - Intervalo</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Término - Expediente</label>
+              <input type="time">
+            </div>
+          </div> <br>
+          <hr>
+        </div>
+        <div id="sexta" class="dia-manual" style="display:none;">
+          <h4>Sexta</h4>
+          <div class="horario-padrao">
+            <div class="campo">
+              <label>Início - Expediente</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Início - Intervalo</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Término - Intervalo</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Término - Expediente</label>
+              <input type="time">
+            </div>
+          </div> <br>
+          <hr>
+        </div>
+        <div id="sabado" class="dia-manual" style="display:none;">
+          <h4>Sábado</h4>
+          <div class="horario-padrao">
+            <div class="campo">
+              <label>Início - Expediente</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Início - Intervalo</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Término - Intervalo</label>
+              <input type="time">
+            </div>
+            <div class="campo">
+              <label>Término - Expediente</label>
+              <input type="time">
+            </div>
+          </div> <br>
+          <hr>
+        </div>
+
+
+      </div>
+
+      <!-- AÇÕES -->
+      <div class="acoes">
+        <button class="btn-cad" onclick="window.top.location.href='./templates/cadastrar.html'">Realizar Cadastro
+          Facial</button>
+      </div>
 
   </div>
-</section>
 
-<section class="card">
-  <h3>Jornada Semanal</h3>
-
-  <!-- Tipo de jornada -->
-  <div class="campo">
-    <label>Tipo de jornada</label>
-    <select id="tipoJornada" onchange="alternarJornada()">
-      <option value="padrao">Jornada padronizada</option>
-      <option value="manual">Edição manual</option>
-    </select>
-  </div>
-
-  <!-- JORNADA PADRONIZADA -->
-  <div id="jornadaPadrao">
-
-    <div class="dias-semana">
-      <label><input type="checkbox"> Domingo</label>
-      <label><input type="checkbox"> Segunda</label>
-      <label><input type="checkbox"> Terça</label>
-      <label><input type="checkbox"> Quarta</label>
-      <label><input type="checkbox"> Quinta</label>
-      <label><input type="checkbox"> Sexta</label>
-      <label><input type="checkbox"> Sábado</label>
-    </div>
-
-   <div class="horario-padrao">
-
-  <div class="campo">
-    <label>início - Expediente</label>
-    <input type="time">
-  </div>
-
-  <div class="campo">
-    <label>início - Intervalo </label>
-    <input type="time">
-  </div>
-
-  <div class="campo">
-    <label>Término - Intervalo </label>
-    <input type="time">
-  </div>
-
-  <div class="campo">
-    <label>Término - Expediente </label>
-    <input type="time">
-  </div>
-
-</div>
-
-  </div>
-
-  <div id="jornadaManual" style="display:none;">
-
-  <!-- Seleção de dias -->
-  <div class="dias-semana">
-    <label><input type="checkbox" onchange="toggleDia('domingo')"> Domingo</label>
-    <label><input type="checkbox" onchange="toggleDia('segunda')"> Segunda</label>
-    <label><input type="checkbox" onchange="toggleDia('terca')"> Terça</label>
-    <label><input type="checkbox" onchange="toggleDia('quarta')"> Quarta</label>
-    <label><input type="checkbox" onchange="toggleDia('quinta')"> Quinta</label>
-    <label><input type="checkbox" onchange="toggleDia('sexta')"> Sexta</label>
-    <label><input type="checkbox" onchange="toggleDia('sabado')"> Sábado</label>
-  </div>  <hr>
-
-  <!-- Dias (mesmo layout do padrão) -->
-
-  <div id="domingo" class="dia-manual" style="display:none;">
-  <h4>Domingo</h4>
-    <div class="horario-padrao">
-      <div class="campo">
-        <label>Início - Expediente</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Início - Intervalo</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Término - Intervalo</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Término - Expediente</label>
-        <input type="time">
-      </div>
-    </div>
-    <br><hr>
-  </div>
-  <div id="segunda" class="dia-manual" style="display:none;">
-    <h4>Segunda</h4>
-    <div class="horario-padrao">
-      <div class="campo">
-        <label>Início - Expediente</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Início - Intervalo</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Término - Intervalo</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Término - Expediente</label>
-        <input type="time">
-      </div>
-    </div>    <br><hr>
-  </div>
-  <div id="terca" class="dia-manual" style="display:none;">
-    <h4>Terça</h4>
-    <div class="horario-padrao">
-      <div class="campo">
-        <label>Início - Expediente</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Início - Intervalo</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Término - Intervalo</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Término - Expediente</label>
-        <input type="time">
-      </div>   
-    </div>    <br><hr>
-  </div>
-  <div id="quarta" class="dia-manual" style="display:none;">
-    <h4>Quarta</h4>
-    <div class="horario-padrao">
-      <div class="campo">
-        <label>Início - Expediente</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Início - Intervalo</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Término - Intervalo</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Término - Expediente</label>
-        <input type="time">
-      </div>
-    </div>    <br><hr>
-  </div>
-
-  <div id="quinta" class="dia-manual" style="display:none;">
-    <h4>Quinta</h4>
-    <div class="horario-padrao">
-      <div class="campo">
-        <label>Início - Expediente</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Início - Intervalo</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Término - Intervalo</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Término - Expediente</label>
-        <input type="time">
-      </div>
-    </div>    <br><hr>
-  </div>
-  <div id="sexta" class="dia-manual" style="display:none;">
-    <h4>Sexta</h4>
-    <div class="horario-padrao">
-      <div class="campo">
-        <label>Início - Expediente</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Início - Intervalo</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Término - Intervalo</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Término - Expediente</label>
-        <input type="time">
-      </div>
-    </div>    <br><hr>
-  </div>
-  <div id="sabado" class="dia-manual" style="display:none;">
-    <h4>Sábado</h4>
-    <div class="horario-padrao">
-      <div class="campo">
-        <label>Início - Expediente</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Início - Intervalo</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Término - Intervalo</label>
-        <input type="time">
-      </div>
-      <div class="campo">
-        <label>Término - Expediente</label>
-        <input type="time">
-      </div>
-    </div>    <br><hr>
-  </div>
-
-
-</div>
-
-<!-- AÇÕES -->
-<div class="acoes">
-  <button class="btn-cad" onclick="window.top.location.href='./templates/cadastrar.html'">Realizar Cadastro Facial</button>
-</div>
-
-  </div>
-
-<script>
+  <script>
     function toggleDia(id) {
-  const dia = document.getElementById(id);
+      const dia = document.getElementById(id);
 
-  if (dia.style.display === "none") {
-    dia.style.display = "grid";
-  } else {
-    dia.style.display = "none";
-  }
-}
-function alternarJornada() {
-  const tipo = document.getElementById("tipoJornada").value;
+      if (dia.style.display === "none") {
+        dia.style.display = "grid";
+      } else {
+        dia.style.display = "none";
+      }
+    }
+    function alternarJornada() {
+      const tipo = document.getElementById("tipoJornada").value;
 
-  const padrao = document.getElementById("jornadaPadrao");
-  const manual = document.getElementById("jornadaManual");
+      const padrao = document.getElementById("jornadaPadrao");
+      const manual = document.getElementById("jornadaManual");
 
-  if (tipo === "padrao") {
-    padrao.style.display = "block";
-    manual.style.display = "none";
-  } else {
-    padrao.style.display = "none";
-    manual.style.display = "block";
-  }
-}
-</script>
+      if (tipo === "padrao") {
+        padrao.style.display = "block";
+        manual.style.display = "none";
+      } else {
+        padrao.style.display = "none";
+        manual.style.display = "block";
+      }
+    }
+  </script>
 
 </body>
+
 </html>

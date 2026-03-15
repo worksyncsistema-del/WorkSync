@@ -1,80 +1,71 @@
-
-
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WorkSync | Recuperar Senha </title>
   <link rel="stylesheet" href="css/recup2.css">
- <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
 
 </head>
+
 <body>
 
   <div class="login-container">
 
-    <div class="login-header"> 
-      <spam>WORK</spam>SYNC 
+    <div class="login-header">
+      <spam>WORK</spam>SYNC
     </div>
 
-<div class="login-body">
-    <h3> Nova senha:  </h3>
- <div class="password-box">
-  <input 
-    type="password" 
-    id="novaSenha" 
-    placeholder="Nova senha" 
-    oninput="validarSenha()"
-  >
-
-  <span class="toggle" onclick="toggleSenha(this)">
-    <svg class="eye" viewBox="0 0 24 24">
-      <path d="M12 5C5 5 1 12 1 12s4 7 11 7 11-7 11-7-4-7-11-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/>
-    </svg>
-  </span>
-</div>
-
- <div class="senha-requisitos">
-  <div class="barra">
-    <span id="forca"></span>
-  </div>
-
-  <p>A senha deve:</p>
-  <ul>
-    <li id="req-tamanho">Ter pelo menos 8 caracteres</li>
-    <li id="req-letra">Conter letras (a-z / A-Z)</li>
-    <li id="req-numero">Conter números (0-9)</li>
-    <li id="req-especial">Conter símbolo (@ # $)</li>
-  </ul>
-</div>
-
- <div class="password-box">
-  <input 
-    type="password" 
-    id="confirmarSenha" 
-    placeholder="Confirmar nova senha" 
-    oninput="validarConfirmacao()"
-  >
-
-  <span class="toggle" onclick="toggleSenha(this)">
-    <svg class="eye" viewBox="0 0 24 24">
-      <path d="M12 5C5 5 1 12 1 12s4 7 11 7 11-7 11-7-4-7-11-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z"/>
-    </svg>
-  </span>
-</div>
-
-<p id="erroSenha" class="erro-senha" style="display:none;">
-  As senhas não coincidem! 
-</p>
-
- </div>
     <div class="login-body">
- <button onclick="window.top.location.href='login.html'">Confirmar</button>
- <a class="senha" href="login.html">Voltar</a>
-</div>
+      <h3> Nova senha: </h3>
+      <div class="password-box">
+        <input type="password" id="novaSenha" placeholder="Nova senha" oninput="validarSenha()">
+
+        <span class="toggle" onclick="toggleSenha(this)">
+          <svg class="eye" viewBox="0 0 24 24">
+            <path d="M12 5C5 5 1 12 1 12s4 7 11 7 11-7 11-7-4-7-11-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" />
+          </svg>
+        </span>
+      </div>
+
+      <div class="senha-requisitos">
+        <div class="barra">
+          <span id="forca"></span>
+        </div>
+
+        <p>A senha deve:</p>
+        <ul>
+          <li id="req-tamanho">Ter pelo menos 8 caracteres</li>
+          <li id="req-letra">Conter letras (a-z / A-Z)</li>
+          <li id="req-numero">Conter números (0-9)</li>
+          <li id="req-especial">Conter símbolo (@ # $)</li>
+        </ul>
+      </div>
+
+      <div class="password-box">
+        <input type="password" id="confirmarSenha" placeholder="Confirmar nova senha" oninput="validarConfirmacao()">
+
+        <span class="toggle" onclick="toggleSenha(this)">
+          <svg class="eye" viewBox="0 0 24 24">
+            <path d="M12 5C5 5 1 12 1 12s4 7 11 7 11-7 11-7-4-7-11-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z" />
+          </svg>
+        </span>
+      </div>
+
+      <p id="erroSenha" class="erro-senha" style="display:none;">
+        As senhas não coincidem!
+      </p>
+
+    </div>
+    <div class="login-body">
+      <button onclick="window.top.location.href='login.html'">Confirmar</button>
+      <a class="senha" href="login.html">Voltar</a>
+    </div>
   </div>
 
   <footer>
@@ -83,7 +74,5 @@
 
   <script src="js/recup.js"></script>
 </body>
+
 </html>
-
-
-
