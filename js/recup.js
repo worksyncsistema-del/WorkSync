@@ -1,32 +1,38 @@
 function validarSenha() {
   const senha = document.getElementById("novaSenha").value;
 
-  const tamanho = senha.length >= 8;
-  const letra = /[a-zA-Z]/.test(senha);
+  const tamanho = senha.length >= 8 && senha.length <= 12;
+  const letra = /[a-z]/.test(senha);
+  const letraMai = /[A-Z]/.test(senha);
   const numero = /[0-9]/.test(senha);
   const especial = /[@#$]/.test(senha);
 
   marcar("req-tamanho", tamanho);
   marcar("req-letra", letra);
+  marcar("req-letraMai", letraMai);
   marcar("req-numero", numero);
   marcar("req-especial", especial);
 
-  let forca = tamanho + letra + numero + especial;
+  let forca = tamanho + letra + numero + letraMai + especial;
   const barra = document.getElementById("forca");
 
   if (forca === 1) {
-    barra.style.width = "25%";
-    barra.style.background = "red";
+    barra.style.width = "20%";
+    barra.style.background = "#e74c3c";
   } else if (forca === 2) {
-    barra.style.width = "50%";
+    barra.style.width = "40%";
     barra.style.background = "orange";
   } else if (forca === 3) {
-    barra.style.width = "75%";
+    barra.style.width = "60%";
     barra.style.background = "#f1c40f";
   } else if (forca === 4) {
+    barra.style.width = "80%";
+    barra.style.background = "#9acd32";
+  } else if (forca === 5) {
     barra.style.width = "100%";
-    barra.style.background = "#1db954";
-  } else {
+    barra.style.background = "#2ecc71";
+  }
+  else {
     barra.style.width = "0%";
   }
 }

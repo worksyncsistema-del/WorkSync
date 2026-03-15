@@ -24,7 +24,7 @@
     <div class="login-body">
       <h3> Nova senha: </h3>
       <div class="password-box">
-        <input type="password" id="novaSenha" placeholder="Nova senha" oninput="validarSenha()">
+        <input type="password" id="novaSenha" placeholder="Nova senha" maxlength="12" oninput="validarSenha()">
 
         <span class="toggle" onclick="toggleSenha(this)">
           <svg class="eye" viewBox="0 0 24 24">
@@ -40,15 +40,16 @@
 
         <p>A senha deve:</p>
         <ul>
-          <li id="req-tamanho">Ter pelo menos 8 caracteres</li>
-          <li id="req-letra">Conter letras (a-z / A-Z)</li>
-          <li id="req-numero">Conter números (0-9)</li>
-          <li id="req-especial">Conter símbolo (@ # $)</li>
+          <li id="req-tamanho">Conter de 8-12 caracteres.</li>
+          <li id="req-letra">Conter 1 ou mais letras minúsculas (a-z).</li>
+          <li id="req-letraMai">Conter 1 ou mais letras maiúsculas (A-Z).</li>
+          <li id="req-numero">Conter 1 ou mais números (0-9).</li>
+          <li id="req-especial">Conter 1 ou mais símbolos especiais (@ # $).</li>
         </ul>
       </div>
 
       <div class="password-box">
-        <input type="password" id="confirmarSenha" placeholder="Confirmar nova senha" oninput="validarConfirmacao()">
+        <input type="password" id="confirmarSenha" placeholder="Confirmar nova senha" maxlength="12" oninput="validarConfirmacao()">
 
         <span class="toggle" onclick="toggleSenha(this)">
           <svg class="eye" viewBox="0 0 24 24">
