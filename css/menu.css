@@ -72,7 +72,7 @@ spam { /* cor preta do WORKsync */
 
 .sidebar { /* barra lateral */
   width: 250px;
- background: #E0E0E0;
+ background: #fff;
 }
 
 .sidebar ul { /* estilo da lista da barra lateral */
@@ -97,7 +97,7 @@ spam { /* cor preta do WORKsync */
 
 .sidebar .active { /* clicar na barra lateral */
 	font-family: montserrat;
-  background: #ffffff;
+  background: #E0E0E0;
   border-left: 4px solid #0C4A70;
 }
 
