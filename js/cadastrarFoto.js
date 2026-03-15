@@ -1,5 +1,6 @@
 const video = document.getElementById('video');
 
+// abre a câmera
 function ligarCamera() {
     navigator.mediaDevices.getUserMedia({ video: true })
         .then(stream => {
@@ -12,6 +13,7 @@ function ligarCamera() {
         });
 }
 
+// captura a imagem
 function capturarImagem() {
     const canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
