@@ -153,3 +153,27 @@ function toggleSenha(el){
   }
 
 }
+
+function gerarCodigo() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+function enviarCodigo() {
+  const email = document.getElementById("email").value;
+
+  if (!email) {
+    alert("Digite um e-mail");
+    return;
+  }
+
+  const codigo = gerarCodigo();
+
+  // salvar temporariamente (simples pra projeto local)
+  localStorage.setItem("reset_email", email);
+  localStorage.setItem("reset_codigo", codigo);
+
+  alert("Código enviado: " + codigo);
+
+  // redireciona pra próxima tela
+  window.location.href = "codigo.html";
+}

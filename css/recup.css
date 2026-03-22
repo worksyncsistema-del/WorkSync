@@ -12,13 +12,12 @@ body { /* pagina inteira */
 
 .login-container { 
   width: 450px;
-  height: 340px;
   background: #fff;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 3px 8px rgba(0,0,0,0.08);
 }
-spam { /* cor preta do WORKsync */
+span { /* cor preta do WORKsync */
 	color: black;
 }
 .login-header {

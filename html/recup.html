@@ -18,18 +18,18 @@
   <div class="login-container">
 
     <div class="login-header">
-      <spam>WORK</spam>SYNC
+      <span>WORK</span>SYNC
     </div>
 
     <div class="login-body">
       <h3> Recuperar senha </h3>
-      <label> Para recuperar sua senha, digite o e-mail utilizado durante
-        o seu cadastro e lhe enviaremos um link com as instruções.</label>
+      <label> Para recuperar sua senha, digite seu e-mail e te enviaremos um código para redefinição.</label>
       <input type="text" id="email" placeholder="E-mail">
     </div>
     <div class="login-body">
-      <button onclick="enviarEmail()">Enviar</button>
+<button onclick="enviarCodigo()">Enviar código</button>
       <a class="senha" href="login.html">Voltar</a>
+      <br>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>

@@ -1,0 +1,9 @@
+CLOUD_NAME=dnvuaxnd2
+CLOUD_KEY=951873264679298
+CLOUD_SECRET=aT9h1MuB-eY6Rj_zad7lHC3F4YE
+
+DB_HOST=db.kxefcyzqjkbaakzgawnl.supabase.co
+DB_USER=postgres
+DB_PASSWORD=MBCC5LFGRvvDsVNg
+DB_NAME=postgres
+DB_PORT=5432

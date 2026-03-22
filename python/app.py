@@ -1,16 +1,29 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import mysql.connector
+import psycopg2
+import psycopg2.extras
 from datetime import datetime
 from zoneinfo import ZoneInfo
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
+# =========================
+# CORS
+# =========================
+CORS(app)
+
+# =========================
+# CONTROLE MOCK
+# =========================
 contador = 0
 
-@app.route("/")
+@app.route("/cadastro")
 def home():
-    return "WorkSync API online v1.2"
+    return "./html/cadastro.html"
 
 @app.route("/hora-servidor")
 def hora_servidor():
@@ -38,52 +51,67 @@ def status():
         "status": estado
     })
 
-# ✅ LIBERA CORS
-CORS(app)
-
+# =========================
+# CONEXÃO POSTGRESQL (SUPABASE)
+# =========================
 def conectar_bd():
-    return mysql.connector.connect(
-        host="maglev.proxy.rlwy.net",
-        port=10257,
-        user="root",
-        password="KPVdVzWbHHXSwfjZffVJlAOqJcXtFJgo",
-        database="railway"
+    return psycopg2.connect(
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        dbname=os.getenv("DB_NAME"),
+        port=os.getenv("DB_PORT")
     )
 
+# =========================
+# LOGIN
+# =========================
 @app.route("/login", methods=["POST"])
 def login():
-    dados = request.json
+    try:
+        dados = request.get_json()
 
-    cpf = dados["cpf"]
-    senha = dados["senha"]
+        cpf = dados.get("cpf")
+        senha = dados.get("senha")
 
-    conn = conectar_bd()
-    cursor = conn.cursor(dictionary=True)
+        if not cpf or not senha:
+            return jsonify({"status": "erro", "mensagem": "Dados inválidos"})
 
-    cursor.execute("""
-        SELECT nome FROM usuarios
-        WHERE cpf=%s AND senha=%s
-    """, (cpf, senha))
+        conn = conectar_bd()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-    usuario = cursor.fetchone()
+        cursor.execute("""
+            SELECT nome, senha_hash
+            FROM usuarios
+            WHERE cpf = %s
+        """, (cpf,))
 
-    cursor.close()
-    conn.close()
+        usuario = cursor.fetchone()
 
-    if usuario:
-        return jsonify({
-            "status": "ok",
-            "nome": usuario["nome"]
-        })
-    else:
-        return jsonify({"status": "erro"})
+        cursor.close()
+        conn.close()
 
+        if not usuario:
+            return jsonify({"status": "erro", "mensagem": "Usuário não encontrado"})
 
-import os
+        # ⚠️ TEMPORÁRIO (sem bcrypt)
+        if senha == usuario["senha_hash"]:
+            return jsonify({
+                "status": "ok",
+                "nome": usuario["nome"]
+            })
+        else:
+            return jsonify({"status": "erro", "mensagem": "Senha incorreta"})
 
+    except Exception as e:
+        return jsonify({"status": "erro", "mensagem": str(e)})
+
+# =========================
+# INICIAR SERVIDOR
+# =========================
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
-        port=int(os.environ.get("PORT", 5000)),
+        port=int(os.getenv("PORT", 5500)),
         debug=True
     )
