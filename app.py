@@ -6,8 +6,9 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 import os
 from dotenv import load_dotenv
+from flask import render_template
 
-load_dotenv()
+load_dotenv(dotenv_path=".env")
 
 app = Flask(__name__)
 
@@ -21,9 +22,70 @@ CORS(app)
 # =========================
 contador = 0
 
-@app.route("/cadastro")
+@app.route("/")
 def home():
-    return "./html/cadastro.html"
+    return render_template("index.html")
+
+@app.route("/cadastro")
+def cadastro():
+    return render_template("cadastro.html")
+
+@app.route('/cadastrar_usuario', methods=['POST'])
+def cadastrar_usuario():
+    try:
+        dados = request.get_json()
+
+        conexao = conectar_bd()
+        cursor = conexao.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+        # USUARIO
+        cursor.execute("""
+            INSERT INTO usuarios (nome, email, telefone, cpf)
+            VALUES (%s, %s, %s, %s)
+            RETURNING id
+        """, (
+            dados['nome'],
+            dados['email'],
+            dados['telefone'],
+            dados['cpf']
+        ))
+
+        usuario_id = cursor.fetchone()['id']
+
+        # FUNCIONARIO
+        cursor.execute("""
+            INSERT INTO funcionarios (
+                usuario_id, cargo, setor, tipo_perfil,
+                matricula, data_admissao, tipo_contrato,
+                carga_horaria, jornada_padrao
+            )
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        """, (
+            usuario_id,
+            dados['cargo'],
+            dados['setor'],
+            dados['tipo_perfil'],
+            dados['matricula'],
+            dados['data_admissao'],
+            dados['tipo_contrato'],
+            dados['carga_horaria'],
+            dados['jornada']
+        ))
+
+        conexao.commit()
+        cursor.close()
+        conexao.close()
+
+        return jsonify({
+            "status": "ok",
+            "mensagem": "Usuário cadastrado com sucesso"
+        })
+
+    except Exception as e:
+        return jsonify({
+            "status": "erro",
+            "mensagem": str(e)
+        })
 
 @app.route("/hora-servidor")
 def hora_servidor():
@@ -60,7 +122,8 @@ def conectar_bd():
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
         dbname=os.getenv("DB_NAME"),
-        port=os.getenv("DB_PORT")
+        port=os.getenv("DB_PORT"),
+        sslmode="require"  # 👈 ISSO AQUI
     )
 
 # =========================
@@ -112,6 +175,6 @@ def login():
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
-        port=int(os.getenv("PORT", 5500)),
+        port=int(os.getenv("PORT", 5000)),
         debug=True
     )

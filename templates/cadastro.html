@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../css/cadastro.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastro.css') }}">
 </head>
 
 <body>
@@ -415,10 +415,10 @@ const res = await fetch("http://127.0.0.1:5000/cadastrar_usuario", {
   const json = await res.json();
   console.log("json:", json); // 👈 TESTE 5
 
-  if(json.ok){
-    alert("Usuário cadastrado!");
-  }else{
-    alert("Erro: " + json.erro);
+  if (json.status === "ok") {
+    alert(json.mensagem);
+  } else {
+    alert("Erro: " + json.mensagem);
   }
 }
 </script>
