@@ -17,7 +17,7 @@ links.forEach(link => {
 
 async function atualizarRelogio() {
   const resposta = await fetch(
-    "https://fabulous-reprieve-production-9728.up.railway.app/hora-servidor",
+    "/hora-servidor",
   );
   const dados = await resposta.json();
 
@@ -31,7 +31,7 @@ atualizarRelogio();
 
 async function atualizarStatus() {
   const resposta = await fetch(
-    "https://fabulous-reprieve-production-9728.up.railway.app/status",
+    "/status",
   );
   const dados = await resposta.json();
 

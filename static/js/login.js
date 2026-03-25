@@ -87,7 +87,7 @@ function login() {
   const senha = campoSenha.value;
 
   // 🟢 Enviar para o backend Python
-  fetch("https://fabulous-reprieve-production-9728.up.railway.app/login", {
+  fetch("/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -102,7 +102,7 @@ function login() {
       if (data.status === "ok") {
         // ✅ Login válido
         localStorage.setItem("usuarioNome", data.nome);
-        window.location.href = "menu.html";
+        window.location.href = "/menu";
       } else {
         // ❌ Login inválido
         alert("CPF ou senha incorretos.");

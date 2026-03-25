@@ -1,68 +1,34 @@
+from flask import Blueprint, request, jsonify
+from db import conectar_bd
 import cloudinary
 import cloudinary.uploader
-from flask import Flask, render_template, request, jsonify
 from deepface import DeepFace
 import base64
-import os
-import mysql.connector
-from datetime import datetime
 import uuid
+import os
 import json
 import numpy as np
-from dotenv import load_dotenv
 import cv2
+from datetime import datetime
+from dotenv import load_dotenv
 
 load_dotenv()
 
-app = Flask(__name__)
+face_bp = Blueprint("face", __name__)
 
-# =========================
-# CLOUDINARY
-# =========================
 cloudinary.config(
     cloud_name=os.getenv("CLOUD_NAME"),
     api_key=os.getenv("CLOUD_KEY"),
     api_secret=os.getenv("CLOUD_SECRET")
 )
 
-# =========================
-# BANCO
-# =========================
-def conectar():
-    return mysql.connector.connect(
-        host=os.getenv("DB_HOST"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME"),
-        port=int(os.getenv("DB_PORT"))
-    )
-
-# =========================
-# CARREGAR MODELO
-# =========================
 print("Carregando modelo...")
 DeepFace.build_model("Facenet")
 print("Modelo carregado!")
 
-# =========================
-# ROTAS
-# =========================
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/cadastrar')
-def pagina_cadastro():
-    return render_template('cadastrar.html')
-
-# =========================
-# CADASTRAR FOTO
-# =========================
-@app.route('/salvar_cadastro', methods=['POST'])
+@face_bp.route('/salvar_cadastro', methods=['POST'])
 def salvar_cadastro():
-
     try:
-
         dados = request.get_json()
         nome = dados.get('nome')
         imagem = dados.get('imagem')
@@ -75,12 +41,10 @@ def salvar_cadastro():
         if "," in imagem:
             imagem = imagem.split(",")[1]
 
-        imagem_bytes = base64.b64decode(imagem)
-
         temp_path = f"{uuid.uuid4()}.jpg"
 
         with open(temp_path, "wb") as f:
-            f.write(imagem_bytes)
+            f.write(base64.b64decode(imagem))
 
         img = cv2.imread(temp_path)
 
@@ -91,16 +55,15 @@ def salvar_cadastro():
         img = cv2.resize(img, (640, 480))
         cv2.imwrite(temp_path, img)
 
-        conexao = conectar()
-        cursor = conexao.cursor()
+        conn = conectar_bd()
+        cursor = conn.cursor()
 
         cursor.execute("SELECT COUNT(*) FROM fotos WHERE nome = %s", (nome,))
         numero_fotos = cursor.fetchone()[0]
 
         if numero_fotos >= 5:
-
             cursor.close()
-            conexao.close()
+            conn.close()
             os.remove(temp_path)
 
             return jsonify({
@@ -127,8 +90,6 @@ def salvar_cadastro():
         )[0]["embedding"]
 
         embedding = np.array(embedding)
-
-        # normalizar embedding
         embedding = embedding / np.linalg.norm(embedding)
 
         embedding_json = json.dumps(list(embedding))
@@ -138,10 +99,9 @@ def salvar_cadastro():
             (nome, url_imagem, embedding_json)
         )
 
-        conexao.commit()
-
+        conn.commit()
         cursor.close()
-        conexao.close()
+        conn.close()
 
         os.remove(temp_path)
 
@@ -152,14 +112,9 @@ def salvar_cadastro():
     except Exception as e:
         return jsonify({"erro": str(e)})
 
-# =========================
-# RECONHECER
-# =========================
-@app.route('/reconhecer', methods=['POST'])
+@face_bp.route('/reconhecer', methods=['POST'])
 def reconhecer():
-
     try:
-
         dados = request.get_json()
         imagem = dados.get('imagem')
 
@@ -169,12 +124,10 @@ def reconhecer():
         if "," in imagem:
             imagem = imagem.split(",")[1]
 
-        imagem_bytes = base64.b64decode(imagem)
-
         temp_path = f"{uuid.uuid4()}.jpg"
 
         with open(temp_path, "wb") as f:
-            f.write(imagem_bytes)
+            f.write(base64.b64decode(imagem))
 
         img = cv2.imread(temp_path)
 
@@ -185,8 +138,6 @@ def reconhecer():
         img = cv2.resize(img, (640, 480))
         cv2.imwrite(temp_path, img)
 
-
-        # VERIFICAR SE EXISTE ROSTO
         faces = DeepFace.extract_faces(
             img_path=temp_path,
             detector_backend="opencv",
@@ -197,11 +148,10 @@ def reconhecer():
             os.remove(temp_path)
             return jsonify({"erro": "Nenhum rosto detectado"})
 
-        # verificar confiança
         if faces[0]["confidence"] < 0.90:
             os.remove(temp_path)
             return jsonify({"erro": "Rosto não confiável"})
-        
+
         embedding_input = DeepFace.represent(
             img_path=temp_path,
             model_name="Facenet",
@@ -210,12 +160,10 @@ def reconhecer():
         )[0]["embedding"]
 
         embedding_input = np.array(embedding_input)
-
-        # normalizar embedding
         embedding_input = embedding_input / np.linalg.norm(embedding_input)
 
-        conexao = conectar()
-        cursor = conexao.cursor(dictionary=True)
+        conn = conectar_bd()
+        cursor = conn.cursor()
 
         cursor.execute("SELECT nome, embedding FROM fotos")
         pessoas = cursor.fetchall()
@@ -224,14 +172,14 @@ def reconhecer():
         menor_distancia = 999
 
         for pessoa in pessoas:
-
-            embedding_db = np.array(json.loads(pessoa["embedding"]))
+            nome_db = pessoa[0]
+            embedding_db = np.array(json.loads(pessoa[1]))
 
             distancia = np.linalg.norm(embedding_input - embedding_db)
 
             if distancia < menor_distancia:
                 menor_distancia = distancia
-                melhor_nome = pessoa["nome"]
+                melhor_nome = nome_db
 
         print("Distância encontrada:", menor_distancia)
 
@@ -240,24 +188,21 @@ def reconhecer():
             agora = datetime.now()
 
             cursor.execute("""
-            SELECT COUNT(*) as total FROM presenca
-            WHERE nome = %s AND DATE(data_registro) = CURDATE()
+                SELECT COUNT(*) FROM presenca
+                WHERE nome = %s AND DATE(data_registro) = CURRENT_DATE
             """, (melhor_nome,))
 
-            existe = cursor.fetchone()["total"]
+            existe = cursor.fetchone()[0]
 
             if existe == 0:
-
                 cursor.execute(
                     "INSERT INTO presenca (nome, data_registro) VALUES (%s, %s)",
                     (melhor_nome, agora)
                 )
-
-                conexao.commit()
+                conn.commit()
 
             cursor.close()
-            conexao.close()
-
+            conn.close()
             os.remove(temp_path)
 
             return jsonify({
@@ -266,15 +211,10 @@ def reconhecer():
             })
 
         else:
-
+            cursor.close()
+            conn.close()
             os.remove(temp_path)
             return jsonify({"erro": "Rosto não reconhecido!"})
 
     except Exception as e:
         return jsonify({"erro": str(e)})
-
-# =========================
-# INICIAR
-# =========================
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=80, debug=True, use_reloader=False)
