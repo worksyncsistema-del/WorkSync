@@ -6,11 +6,11 @@ from deepface import DeepFace
 import base64
 import uuid
 import os
-import json
 import numpy as np
 import cv2
 from datetime import datetime
 from dotenv import load_dotenv
+from pgvector.psycopg2 import register_vector
 
 load_dotenv()
 
@@ -26,6 +26,9 @@ print("Carregando modelo...")
 DeepFace.build_model("Facenet")
 print("Modelo carregado!")
 
+# =========================
+# CADASTRO
+# =========================
 @face_bp.route('/salvar_cadastro', methods=['POST'])
 def salvar_cadastro():
     try:
@@ -56,8 +59,10 @@ def salvar_cadastro():
         cv2.imwrite(temp_path, img)
 
         conn = conectar_bd()
+        register_vector(conn)
         cursor = conn.cursor()
 
+        # limite de 5 fotos
         cursor.execute("SELECT COUNT(*) FROM fotos WHERE nome = %s", (nome,))
         numero_fotos = cursor.fetchone()[0]
 
@@ -73,6 +78,7 @@ def salvar_cadastro():
 
         numero_fotos += 1
 
+        # upload imagem
         upload = cloudinary.uploader.upload(
             temp_path,
             folder=f"rostos/{nome}",
@@ -82,6 +88,7 @@ def salvar_cadastro():
 
         url_imagem = upload["secure_url"]
 
+        # gerar embedding
         embedding = DeepFace.represent(
             img_path=temp_path,
             model_name="Facenet",
@@ -92,11 +99,13 @@ def salvar_cadastro():
         embedding = np.array(embedding)
         embedding = embedding / np.linalg.norm(embedding)
 
-        embedding_json = json.dumps(list(embedding))
+        # 🔥 CONVERSÃO CORRETA
+        embedding_list = [float(x) for x in embedding]
 
+        # salvar no banco
         cursor.execute(
             "INSERT INTO fotos (nome, url, embedding) VALUES (%s, %s, %s)",
-            (nome, url_imagem, embedding_json)
+            (nome, url_imagem, embedding_list)
         )
 
         conn.commit()
@@ -106,12 +115,16 @@ def salvar_cadastro():
         os.remove(temp_path)
 
         return jsonify({
-            "mensagem": f"Foto {numero_fotos}/5 cadastrada!"
+            "mensagem": f"Foto {numero_fotos}/5 cadastrada!",
+            "quantidade": numero_fotos
         })
 
     except Exception as e:
         return jsonify({"erro": str(e)})
 
+# =========================
+# RECONHECIMENTO
+# =========================
 @face_bp.route('/reconhecer', methods=['POST'])
 def reconhecer():
     try:
@@ -138,6 +151,7 @@ def reconhecer():
         img = cv2.resize(img, (640, 480))
         cv2.imwrite(temp_path, img)
 
+        # detectar rosto
         faces = DeepFace.extract_faces(
             img_path=temp_path,
             detector_backend="opencv",
@@ -152,6 +166,7 @@ def reconhecer():
             os.remove(temp_path)
             return jsonify({"erro": "Rosto não confiável"})
 
+        # gerar embedding
         embedding_input = DeepFace.represent(
             img_path=temp_path,
             model_name="Facenet",
@@ -162,28 +177,33 @@ def reconhecer():
         embedding_input = np.array(embedding_input)
         embedding_input = embedding_input / np.linalg.norm(embedding_input)
 
+        # 🔥 CONVERSÃO CORRETA
+        embedding_input_list = [float(x) for x in embedding_input]
+
         conn = conectar_bd()
+        register_vector(conn)
         cursor = conn.cursor()
 
-        cursor.execute("SELECT nome, embedding FROM fotos")
-        pessoas = cursor.fetchall()
+        # 🔥 busca vetorial
+        cursor.execute("""
+            SELECT nome, embedding <-> %s::vector AS distancia
+            FROM fotos
+            ORDER BY distancia
+            LIMIT 1
+        """, (embedding_input_list,))
 
-        melhor_nome = None
-        menor_distancia = 999
+        resultado = cursor.fetchone()
 
-        for pessoa in pessoas:
-            nome_db = pessoa[0]
-            embedding_db = np.array(json.loads(pessoa[1]))
+        if resultado:
+            melhor_nome = resultado[0]
+            menor_distancia = resultado[1]
+        else:
+            melhor_nome = None
+            menor_distancia = 999
 
-            distancia = np.linalg.norm(embedding_input - embedding_db)
+        print("Distância:", menor_distancia)
 
-            if distancia < menor_distancia:
-                menor_distancia = distancia
-                melhor_nome = nome_db
-
-        print("Distância encontrada:", menor_distancia)
-
-        if melhor_nome and menor_distancia < 0.9:
+        if melhor_nome and menor_distancia < 0.6:
 
             agora = datetime.now()
 
