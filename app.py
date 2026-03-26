@@ -6,6 +6,7 @@ from routes.views import views_bp
 from routes.face import face_bp
 
 app = Flask(__name__)
+app.secret_key = "chave_super_secreta_123" 
 CORS(app)
 
 app.register_blueprint(auth_bp)

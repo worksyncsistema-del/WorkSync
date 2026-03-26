@@ -1,18 +1,20 @@
 from flask import Blueprint, render_template, redirect, url_for
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from utils.auth_decorator import login_required
 
 views_bp = Blueprint("views", __name__)
 
 @views_bp.route("/")
 def home():
-    return redirect(url_for("views.login_page"))
+    return redirect(url_for("auth.login_page"))
 
 @views_bp.route("/login-page")
 def login_page():
     return render_template("login.html")
 
 @views_bp.route("/menu")
+@login_required
 def menu():
     return render_template("menu.html")
 
@@ -29,6 +31,7 @@ def cadastro():
     return render_template("cadastro.html")
 
 @views_bp.route("/cadastrar")
+@login_required
 def cadastrar_face():
     return render_template("cadastrar.html")
 

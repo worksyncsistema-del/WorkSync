@@ -67,6 +67,7 @@ function verificarCPF() {
 
 // acessa o sistema
 function login() {
+  console.log("LOGIN FOI CHAMADO");
   const campoCPF = document.getElementById("cpf");
   const campoSenha = document.getElementById("senha");
 
@@ -86,6 +87,7 @@ function login() {
 
   const senha = campoSenha.value;
 
+  console.log("Enviando login...");
   // 🟢 Enviar para o backend Python
   fetch("/login", {
     method: "POST",

@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session, render_template, redirect
 import psycopg2.extras
 from db import conectar_bd
 
@@ -18,7 +18,9 @@ def login():
         if not cpf or not senha:
             return jsonify({"erro": "Dados inválidos"})
 
-        cpf = cpf.replace(".", "").replace("-", "")
+        # 🔧 limpeza dos dados
+        cpf = cpf.replace(".", "").replace("-", "").strip()
+        senha = str(senha).strip()
 
         conn = conectar_bd()
         cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -34,19 +36,44 @@ def login():
         cursor.close()
         conn.close()
 
+        # ❌ CPF não encontrado
         if not dev:
             return jsonify({"erro": "CPF não encontrado"})
 
-        if senha == dev["senha"]:
-            return jsonify({
-                "status": "ok",
-                "cpf": dev["cpf"]
-            })
+        # 🔧 garante comparação correta (tipo + espaço)
+        senha_bd = str(dev["senha"]).strip()
 
+        # 🧪 DEBUG (pode remover depois)
+        print("CPF digitado:", cpf)
+        print("DEV:", dev)
+        print("Senha digitada:", senha)
+        print("Senha banco:", senha_bd)
+        print("Comparação:", senha == senha_bd)
+
+        # ✅ valida senha
+        if senha == senha_bd:
+            session["usuario"] = dev["cpf"]
+            session["user_id"] = dev["cpf"]
+
+            return jsonify({"status": "ok"})
+
+        # ❌ senha errada
         return jsonify({"erro": "Senha incorreta"})
 
     except Exception as e:
         return jsonify({"erro": str(e)})
+
+
+@auth_bp.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login-page")
+
+@auth_bp.route("/login-page")
+def login_page():
+    if "usuario" in session:
+        return redirect("/menu")
+    return render_template("login.html")
 
 # =========================
 # CADASTRO DE USUÁRIO
