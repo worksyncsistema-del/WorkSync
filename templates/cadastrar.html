@@ -14,7 +14,7 @@
 <br><br>
 
 <button onclick="iniciarCamera()">Abrir Câmera</button>
-<button onclick="capturar()">Capturar Foto</button>
+<button id="btnCapturar" onclick="capturar()">Capturar Foto</button>
 
 <br><br>
 
@@ -44,50 +44,63 @@ function iniciarCamera(){
     });
 }
 
-function capturar(){
+    async function capturar() {
 
-    const nome = document.getElementById("nome").value;
+        const nome = document.getElementById("nome").value.trim();
+        const btnCapturar = document.getElementById("btnCapturar");
 
-    if(!nome){
-        alert("Digite o nome");
-        return;
+        // 🚫 bloqueia se já estiver processando
+        if (btnCapturar.disabled) return;
+
+        if (!nome) {
+            alert("Digite o nome");
+            return;
+        }
+
+        // 🔒 bloqueia botão
+        btnCapturar.disabled = true;
+        btnCapturar.innerText = "Processando...";
+
+        try {
+
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0);
+
+            const imagem = canvas.toDataURL("image/jpeg");
+
+            const response = await fetch("/salvar_cadastro", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    nome: nome,
+                    imagem: imagem
+                })
+            });
+
+            const data = await response.json();
+
+            alert(data.mensagem || data.erro);
+
+        } catch (err) {
+
+            console.error(err);
+            alert("Erro ao cadastrar");
+
+        } finally {
+
+            // 🔓 libera botão
+            btnCapturar.disabled = false;
+            btnCapturar.innerText = "Capturar Foto";
+
+        }
+
     }
-
-    const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(video,0,0);
-
-    const imagem = canvas.toDataURL("image/jpeg");
-
-    fetch("/salvar_cadastro",{
-
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-            nome:nome,
-            imagem:imagem
-        })
-
-    })
-    .then(res => res.json())
-    .then(data => {
-
-        alert(data.mensagem || data.erro);
-
-    })
-    .catch(err => {
-
-        console.error(err);
-        alert("Erro ao cadastrar");
-
-    });
-
-}
 
 </script>
 
