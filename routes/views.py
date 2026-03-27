@@ -35,6 +35,7 @@ def cadastro():
 def cadastrar_face():
     return render_template("cadastrar.html")
 
+
 # =========================
 # HORA DO SERVIDOR
 # =========================
