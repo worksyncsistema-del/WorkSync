@@ -206,20 +206,14 @@ def reconhecer():
         if melhor_nome and menor_distancia < 0.6:
 
             agora = datetime.now()
+            data = agora.date()
+            hora = agora.time().replace(microsecond=0)
 
-            cursor.execute("""
-                SELECT COUNT(*) FROM presenca
-                WHERE nome = %s AND DATE(data_registro) = CURRENT_DATE
-            """, (melhor_nome,))
-
-            existe = cursor.fetchone()[0]
-
-            if existe == 0:
-                cursor.execute(
-                    "INSERT INTO presenca (nome, data_registro) VALUES (%s, %s)",
-                    (melhor_nome, agora)
-                )
-                conn.commit()
+            cursor.execute(
+                "INSERT INTO presenca (nome, data_registro, horario_registro) VALUES (%s, %s, %s)",
+                (melhor_nome, data, hora)
+            )
+            conn.commit()
 
             cursor.close()
             conn.close()
