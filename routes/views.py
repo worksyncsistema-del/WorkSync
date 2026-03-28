@@ -9,31 +9,60 @@ views_bp = Blueprint("views", __name__)
 def home():
     return redirect(url_for("auth.login_page"))
 
+# =========================
+# PAGINA DE LOGIN
+# =========================
 @views_bp.route("/login-page")
 def login_page():
     return render_template("login.html")
+
+@views_bp.route("/recuperacaoSenha")
+def recuperacao_senha():
+    return render_template("recuperacaoSenha.html")
+
+# =========================
+# MENU
+# =========================
 
 @views_bp.route("/menu")
 @login_required
 def menu():
     return render_template("menu.html")
 
+# =========================
+# TELAS DENTRO DO MENU
+# =========================
+
 @views_bp.route("/controleponto")
 def controle_ponto():
     return render_template("controleponto.html")
 
-@views_bp.route("/index")
-def index():
-    return render_template("index.html")
+@views_bp.route("/perfil")
+def perfil():
+    return render_template("perfil.html")
 
-@views_bp.route("/cadastro")
-def cadastro():
-    return render_template("cadastro.html")
+@views_bp.route("/cadastroUsuario")
+def cadastro_usuario():
+    return render_template("cadastroUsuario.html")
 
-@views_bp.route("/cadastrar")
+@views_bp.route("/reconhecimentoFacial")
+def reconhecimento_facial():
+    return render_template("reconhecimentoFacial.html")
+
+@views_bp.route("/cadastrarFoto")
 @login_required
-def cadastrar_face():
-    return render_template("cadastrar.html")
+def cadastrar_foto():
+    return render_template("cadastrarFoto.html")
+
+@views_bp.route("/cadastroFotoNF")
+@login_required
+def cadastro_foto_nf():
+    return render_template("cadastroFotoNF.html")
+
+@views_bp.route("/redefinicaoSenha")
+@login_required
+def redefinicao_senha():
+    return render_template("redefinicaoSenha.html")
 
 
 # =========================
@@ -51,7 +80,6 @@ def hora_servidor():
         "hora": agora.strftime("%H:%M:%S"),
         "dia": dia_semana
     }
-
 
 # =========================
 # STATUS (MOCK)
