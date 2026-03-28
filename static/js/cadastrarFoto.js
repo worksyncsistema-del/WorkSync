@@ -5,7 +5,11 @@ function ligarCamera() {
     navigator.mediaDevices.getUserMedia({ video: true })
         .then(stream => {
             video.srcObject = stream;
-            video.play();
+
+            video.onloadedmetadata = () => {
+                video.play();
+                console.log("Câmera pronta!");
+            };
         })
         .catch(error => {
             alert("Erro ao acessar a câmera!");
@@ -15,11 +19,18 @@ function ligarCamera() {
 
 // captura a imagem
 function capturarImagem() {
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+        alert("A câmera ainda não carregou!");
+        return null;
+    }
+
     const canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
+
     const ctx = canvas.getContext("2d");
     ctx.drawImage(video, 0, 0);
+
     return canvas.toDataURL("image/jpeg");
 }
 

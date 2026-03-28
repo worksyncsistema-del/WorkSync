@@ -2,6 +2,13 @@ from flask import Blueprint, render_template, redirect, url_for
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from utils.auth_decorator import login_required
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/menu')
+def menu():
+    return render_template('menu.html')
 
 views_bp = Blueprint("views", __name__)
 
@@ -98,3 +105,6 @@ def status():
     return {
         "status": estado
     }
+
+if __name__ == '__main__':
+    app.run(debug=True)

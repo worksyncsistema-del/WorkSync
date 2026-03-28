@@ -44,19 +44,14 @@ def salvar_cadastro():
         if "," in imagem:
             imagem = imagem.split(",")[1]
 
-        temp_path = f"{uuid.uuid4()}.jpg"
-
-        with open(temp_path, "wb") as f:
-            f.write(base64.b64decode(imagem))
-
-        img = cv2.imread(temp_path)
+        # 🔥 base64 → imagem
+        nparr = np.frombuffer(base64.b64decode(imagem), np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
         if img is None:
-            os.remove(temp_path)
             return jsonify({"erro": "Erro ao ler imagem"})
 
         img = cv2.resize(img, (640, 480))
-        cv2.imwrite(temp_path, img)
 
         conn = conectar_bd()
         register_vector(conn)
@@ -69,8 +64,6 @@ def salvar_cadastro():
         if numero_fotos >= 5:
             cursor.close()
             conn.close()
-            os.remove(temp_path)
-
             return jsonify({
                 "mensagem": "Limite de 5 fotos atingido!",
                 "bloqueado": True
@@ -78,7 +71,10 @@ def salvar_cadastro():
 
         numero_fotos += 1
 
-        # upload imagem
+        # 🔥 salvar temporário só pro Cloudinary
+        temp_path = f"{uuid.uuid4()}.jpg"
+        cv2.imwrite(temp_path, img)
+
         upload = cloudinary.uploader.upload(
             temp_path,
             folder=f"rostos/{nome}",
@@ -88,9 +84,11 @@ def salvar_cadastro():
 
         url_imagem = upload["secure_url"]
 
-        # gerar embedding
+        os.remove(temp_path)
+
+        # 🔥 gerar embedding
         embedding = DeepFace.represent(
-            img_path=temp_path,
+            img_path=img,
             model_name="Facenet",
             detector_backend="opencv",
             enforce_detection=False
@@ -98,8 +96,6 @@ def salvar_cadastro():
 
         embedding = np.array(embedding)
         embedding = embedding / np.linalg.norm(embedding)
-
-        # 🔥 CONVERSÃO CORRETA
         embedding_list = [float(x) for x in embedding]
 
         # salvar no banco
@@ -112,8 +108,6 @@ def salvar_cadastro():
         cursor.close()
         conn.close()
 
-        os.remove(temp_path)
-
         return jsonify({
             "mensagem": f"Foto {numero_fotos}/5 cadastrada!",
             "quantidade": numero_fotos
@@ -121,6 +115,7 @@ def salvar_cadastro():
 
     except Exception as e:
         return jsonify({"erro": str(e)})
+
 
 # =========================
 # RECONHECIMENTO
@@ -137,38 +132,31 @@ def reconhecer():
         if "," in imagem:
             imagem = imagem.split(",")[1]
 
-        temp_path = f"{uuid.uuid4()}.jpg"
-
-        with open(temp_path, "wb") as f:
-            f.write(base64.b64decode(imagem))
-
-        img = cv2.imread(temp_path)
+        # 🔥 base64 → imagem
+        nparr = np.frombuffer(base64.b64decode(imagem), np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
         if img is None:
-            os.remove(temp_path)
             return jsonify({"erro": "Erro ao ler imagem"})
 
         img = cv2.resize(img, (640, 480))
-        cv2.imwrite(temp_path, img)
 
         # detectar rosto
         faces = DeepFace.extract_faces(
-            img_path=temp_path,
+            img_path=img,
             detector_backend="opencv",
             enforce_detection=False
         )
 
         if len(faces) == 0:
-            os.remove(temp_path)
             return jsonify({"erro": "Nenhum rosto detectado"})
 
         if faces[0]["confidence"] < 0.90:
-            os.remove(temp_path)
             return jsonify({"erro": "Rosto não confiável"})
 
-        # gerar embedding
+        # 🔥 gerar embedding
         embedding_input = DeepFace.represent(
-            img_path=temp_path,
+            img_path=img,
             model_name="Facenet",
             detector_backend="opencv",
             enforce_detection=False
@@ -176,8 +164,6 @@ def reconhecer():
 
         embedding_input = np.array(embedding_input)
         embedding_input = embedding_input / np.linalg.norm(embedding_input)
-
-        # 🔥 CONVERSÃO CORRETA
         embedding_input_list = [float(x) for x in embedding_input]
 
         conn = conectar_bd()
@@ -217,7 +203,6 @@ def reconhecer():
 
             cursor.close()
             conn.close()
-            os.remove(temp_path)
 
             return jsonify({
                 "nome": melhor_nome,
@@ -227,7 +212,6 @@ def reconhecer():
         else:
             cursor.close()
             conn.close()
-            os.remove(temp_path)
             return jsonify({"erro": "Rosto não reconhecido!"})
 
     except Exception as e:

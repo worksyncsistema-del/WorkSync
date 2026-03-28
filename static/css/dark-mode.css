@@ -1,0 +1,69 @@
+/* Variáveis CSS para cores */
+:root {
+    --background-light: #f2f2f2;
+    --text-light: #000000;
+    --sidebar-bg-light: #ffffff;
+    --topbar-bg-light: #0F5C8C;
+    --topbar-text-light: #ffffff;
+    --link-light: #000000;
+    --link-hover-light: #cccccc;
+    --active-bg-light: #e0e0e0;
+    --active-border-light: #0C4A70;
+}
+
+/* Estilos para o modo escuro */
+body.dark-mode {
+    --background-color: #1a1a1a;
+    --text-color: #e0e0e0;
+    --sidebar-bg: #2c2c2c;
+    --topbar-bg: #0a3d5c;
+    --topbar-text: #e0e0e0;
+    --link-color: #e0e0e0;
+    --link-hover: #555555;
+    --active-bg: #3a3a3a;
+    --active-border: #082e42;
+
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+body.dark-mode .topbar {
+    background: var(--topbar-bg);
+    color: var(--topbar-text);
+}
+
+body.dark-mode .topbar .logo {
+    color: var(--topbar-text);
+}
+
+body.dark-mode .topbar .logo spam {
+    color: var(--topbar-text);
+}
+
+body.dark-mode #relogio,
+body.dark-mode #nomeUsuario,
+body.dark-mode #status {
+    color: var(--topbar-text);
+}
+
+body.dark-mode .sidebar {
+    background: var(--sidebar-bg);
+}
+
+body.dark-mode .sidebar a {
+    color: var(--link-color);
+}
+
+body.dark-mode .sidebar li:hover {
+    background: var(--link-hover);
+}
+
+body.dark-mode .sidebar .active {
+    background: var(--active-bg);
+    border-left-color: var(--active-border);
+}
+
+body.dark-mode .content {
+    background: var(--background-color);
+}
+
