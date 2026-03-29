@@ -120,6 +120,42 @@ def editar_usuario():
 
     return render_template("editarUsuario.html", usuario=usuario)
 
+
+@views_bp.route("/editarHorarios")
+@login_required
+def editar_horarios():
+    user_id = request.args.get("id")
+
+    conn = conectar_bd()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    cursor.execute("""
+        SELECT 
+            u.id,
+            u.nome,
+            u.email,
+            u.telefone,
+            u.cpf,
+            f.cargo,
+            f.setor,
+            f.tipo_perfil,
+            f.tipo_contrato,
+            f.data_admissao
+        FROM usuarios u
+        LEFT JOIN funcionarios f ON u.id = f.usuario_id
+        WHERE u.id = %s
+    """, (user_id,))
+
+    usuario = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not usuario:
+        return "Usuário não encontrado", 404
+
+    return render_template("editarHorarios.html", usuario=usuario)
+
 # =========================
 # LISTAGEM DE USUÁRIOS
 # =========================
@@ -161,15 +197,16 @@ def atualizar_usuario():
 
         user_id = dados.get("id")
         nome = dados.get("nome")
+        email = dados.get("email")
 
         conn = conectar_bd()
         cursor = conn.cursor()
 
         cursor.execute("""
             UPDATE usuarios
-            SET nome = %s
+            SET nome = %s, email = %s
             WHERE id = %s
-        """, (nome, user_id))
+        """, (nome, email, user_id))
 
         conn.commit()
 

@@ -1,0 +1,168 @@
+* {
+    /* pagina inteira */
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat';
+}
+
+body {
+    /* fundo da pagina */
+    background: #f2f2f2;
+}
+
+.perfil-page {
+    /* div dos dados */
+    padding: 30px;
+}
+
+.card {
+    /* card padrão */
+    background: #fff;
+    padding: 20px 20px 30px 20px;
+    margin-bottom: 25px;
+    border-radius: 6px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.card h3 {
+    /* titulos dentro do card */
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.dados-pessoais {
+    /* div dos dados pessoais */
+    display: flex;
+    gap: 20px;
+}
+
+.foto {
+    /* circulo da foto, provavalemente vamos retirar */
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.campos {
+    /* campos dentro da grid */
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.grid {
+    /* grid pros titulos/campos dentro da div dos cards padrão */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.campo label {
+    /* titulos dentro da grid */
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.campo input {
+    /* texto dentro dos campos da grid (atualmente vazio) */
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #F2F2F2;
+    font-size: 18px;
+}
+
+.campo select {
+    /* texto dentro dos campos da grid (atualmente vazio) */
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #F2F2F2;
+    font-size: 18px;
+}
+
+.acoes {
+    /* div pro botao */
+    margin-top: 20px;
+    text-align: center;
+}
+
+.btn-alterar {
+    /* botao de redefinir senha */
+    padding: 8px;
+    background: #0f5c8c;
+    align-items: center;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 300px;
+}
+
+.btn-senha:hover {
+    /* hover do botao de redefinir senha */
+    background: #0C4A70;
+}
+
+.dias-semana {
+    display: flex;
+    gap: 15px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+    font-size: 18px;
+}
+
+.horario-padrao {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.manual-grid {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.linha-manual {
+    display: grid;
+    grid-template-columns: 120px repeat(4, 1fr);
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.linha-manual span {
+    font-weight: 500;
+}
+
+.dia-manual {
+    margin-top: 20px;
+}
+
+.dia-manual h4 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+input[readonly] {
+    cursor: default;
+}
