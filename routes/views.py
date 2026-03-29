@@ -75,6 +75,12 @@ def redefinicao_senha():
 def gerenciar_usuario():
     return render_template('gerenciarUsuario.html')
 
+from flask import request
+
+@views_bp.route("/editarUsuario")
+def editar_usuario():
+    return render_template("editarUsuario.html")
+
 # =========================
 # HORA DO SERVIDOR
 # =========================

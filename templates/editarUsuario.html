@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Perfil</title>
+
+    <!-- Fonte Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastroUsuario.css') }}">
+</head>
+
+<body>
+
+    <form id="formCadastro">
+        <div class="perfil-page">
+
+            <!-- DADOS PESSOAIS -->
+            <section class="card">
+                <h3>Dados Pessoais</h3>
+
+                <div class="dados-pessoais">
+
+                    <div class="campos">
+                        <div class="campo">
+                            <label>Nome</label>
+                            <input type="text" id="nome">
+                        </div>
+
+                        <div class="campo">
+                            <label>Email</label>
+                            <input type="text" id="email">
+                        </div>
+
+                        <div class="campo">
+                            <label>Telefone</label>
+                            <input type="text" id="telefone">
+                        </div>
+
+                        <div class="campo">
+                            <label>CPF</label>
+                            <input type="text" id="cpf">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DADOS DO TRABALHADOR -->
+            <section class="card">
+                <h3>Dados do Trabalhador</h3>
+
+                <div class="grid">
+
+                    <div class="campo">
+                        <label>Cargo</label>
+                        <select id="cargo">
+                            <option value="">Selecione</option>
+                            <option value="analista">Analista</option>
+                            <option value="assistente">Assistente</option>
+                            <option value="Gerente">Gerente</option>
+                            <option value="coordenador">Coordenador</option>
+                        </select>
+                    </div>
+
+                    <div class="campo">
+                        <label>Setor</label>
+                        <select id="setor">
+                            <option value="">Selecione</option>
+                            <option value="rh">RH</option>
+                            <option value="financeiro">Financeiro</option>
+                            <option value="ti">TI</option>
+                            <option value="comercial">Comercial</option>
+                        </select>
+                    </div>
+
+                    <div class="campo">
+                        <label>Tipo de perfil</label>
+                        <select id="tipo_perfil">
+                            <option value="">Selecione</option>
+                            <option value="admin">Administrador</option>
+                            <option value="funcionario">Colaborador</option>
+                        </select>
+                    </div>
+
+                    <div class="campo">
+                        <label>Tipo de contrato</label>
+                        <select id="tipo_contrato">
+                            <option value="">Selecione</option>
+                            <option value="clt">CLT</option>
+                            <option value="pj">PJ</option>
+                            <option value="estagiario">Estágio</option>
+                            <option value="temporario">Temporário</option>
+                        </select>
+                    </div>
+
+                    <div class="campo">
+                        <label>Data de admissão</label>
+                        <input type="date" id="data_admissao">
+                    </div>
+
+                    <div class="campo">
+                        <label>Carga horária semanal</label>
+                        <input type="text" id="carga_horaria">
+                    </div>
+
+                </div>
+            </section>
+
+            <section class="card">
+                <h3>Jornada Semanal</h3>
+
+                <!-- Tipo de jornada -->
+                <div class="campo">
+                    <label>Tipo de jornada</label>
+                    <select id="tipoJornada" onchange="alternarJornada()">
+                        <option value="padrao">Jornada padronizada</option>
+                        <option value="manual">Edição manual</option>
+                    </select>
+                </div>
+
+                <!-- JORNADA PADRONIZADA -->
+                <div id="jornadaPadrao">
+
+                    <div class="dias-semana">
+                        <label><input type="checkbox"> Domingo</label>
+                        <label><input type="checkbox"> Segunda</label>
+                        <label><input type="checkbox"> Terça</label>
+                        <label><input type="checkbox"> Quarta</label>
+                        <label><input type="checkbox"> Quinta</label>
+                        <label><input type="checkbox"> Sexta</label>
+                        <label><input type="checkbox"> Sábado</label>
+                    </div>
+
+                    <div class="horario-padrao">
+
+                        <div class="campo">
+                            <label>início - Expediente</label>
+                            <input type="time">
+                        </div>
+
+                        <div class="campo">
+                            <label>início - Intervalo </label>
+                            <input type="time">
+                        </div>
+
+                        <div class="campo">
+                            <label>Término - Intervalo </label>
+                            <input type="time">
+                        </div>
+
+                        <div class="campo">
+                            <label>Término - Expediente </label>
+                            <input type="time">
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div id="jornadaManual" style="display:none;">
+
+                    <!-- Seleção de dias -->
+                    <div class="dias-semana">
+                        <label><input type="checkbox" onchange="toggleDia('domingo')"> Domingo</label>
+                        <label><input type="checkbox" onchange="toggleDia('segunda')"> Segunda</label>
+                        <label><input type="checkbox" onchange="toggleDia('terca')"> Terça</label>
+                        <label><input type="checkbox" onchange="toggleDia('quarta')"> Quarta</label>
+                        <label><input type="checkbox" onchange="toggleDia('quinta')"> Quinta</label>
+                        <label><input type="checkbox" onchange="toggleDia('sexta')"> Sexta</label>
+                        <label><input type="checkbox" onchange="toggleDia('sabado')"> Sábado</label>
+                    </div>
+                    <hr>
+
+                    <!-- Dias (mesmo layout do padrão) -->
+
+                    <div id="domingo" class="dia-manual" style="display:none;">
+                        <h4>Domingo</h4>
+                        <div class="horario-padrao">
+                            <div class="campo">
+                                <label>Início - Expediente</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Início - Intervalo</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Término - Intervalo</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Término - Expediente</label>
+                                <input type="time">
+                            </div>
+                        </div>
+                        <br>
+                        <hr>
+                    </div>
+                    <div id="segunda" class="dia-manual" style="display:none;">
+                        <h4>Segunda</h4>
+                        <div class="horario-padrao">
+                            <div class="campo">
+                                <label>Início - Expediente</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Início - Intervalo</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Término - Intervalo</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Término - Expediente</label>
+                                <input type="time">
+                            </div>
+                        </div> <br>
+                        <hr>
+                    </div>
+                    <div id="terca" class="dia-manual" style="display:none;">
+                        <h4>Terça</h4>
+                        <div class="horario-padrao">
+                            <div class="campo">
+                                <label>Início - Expediente</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Início - Intervalo</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Término - Intervalo</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Término - Expediente</label>
+                                <input type="time">
+                            </div>
+                        </div> <br>
+                        <hr>
+                    </div>
+                    <div id="quarta" class="dia-manual" style="display:none;">
+                        <h4>Quarta</h4>
+                        <div class="horario-padrao">
+                            <div class="campo">
+                                <label>Início - Expediente</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Início - Intervalo</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Término - Intervalo</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Término - Expediente</label>
+                                <input type="time">
+                            </div>
+                        </div> <br>
+                        <hr>
+                    </div>
+
+                    <div id="quinta" class="dia-manual" style="display:none;">
+                        <h4>Quinta</h4>
+                        <div class="horario-padrao">
+                            <div class="campo">
+                                <label>Início - Expediente</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Início - Intervalo</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Término - Intervalo</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Término - Expediente</label>
+                                <input type="time">
+                            </div>
+                        </div> <br>
+                        <hr>
+                    </div>
+                    <div id="sexta" class="dia-manual" style="display:none;">
+                        <h4>Sexta</h4>
+                        <div class="horario-padrao">
+                            <div class="campo">
+                                <label>Início - Expediente</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Início - Intervalo</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Término - Intervalo</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Término - Expediente</label>
+                                <input type="time">
+                            </div>
+                        </div> <br>
+                        <hr>
+                    </div>
+                    <div id="sabado" class="dia-manual" style="display:none;">
+                        <h4>Sábado</h4>
+                        <div class="horario-padrao">
+                            <div class="campo">
+                                <label>Início - Expediente</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Início - Intervalo</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Término - Intervalo</label>
+                                <input type="time">
+                            </div>
+                            <div class="campo">
+                                <label>Término - Expediente</label>
+                                <input type="time">
+                            </div>
+                        </div> <br>
+                        <hr>
+                    </div>
+
+
+                </div>
+                <!-- AÇÕES -->
+                <div class="acoes">
+                    <button type="button" class="btn-cad" onclick="cadastrarUsuario()">Salvar Cadastro</button>
+                </div>
+
+        </div>
+    </form>
+
+    <script src="{{ url_for('static', filename='js/cadastroUsuario.js') }}"></script>
+
+</body>
+
+</html>
