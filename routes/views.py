@@ -102,7 +102,9 @@ def editar_usuario():
             u.cpf,
             f.cargo,
             f.setor,
-            f.tipo_perfil
+            f.tipo_perfil,
+            f.tipo_contrato,
+            f.data_admissao
         FROM usuarios u
         LEFT JOIN funcionarios f ON u.id = f.usuario_id
         WHERE u.id = %s
