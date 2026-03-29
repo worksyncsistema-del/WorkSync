@@ -71,6 +71,9 @@ def cadastro_foto_nf():
 def redefinicao_senha():
     return render_template("redefinicaoSenha.html")
 
+@views_bp.route('/gerenciarUsuario')
+def gerenciar_usuario():
+    return render_template('gerenciarUsuario.html')
 
 # =========================
 # HORA DO SERVIDOR

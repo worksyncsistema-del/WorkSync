@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta de Cadastros</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #e9edf2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: auto;
+            background: #f4f6f8;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px;
+            border-radius: 6px;
+            border: none;
+            background: #1f5f85;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #cfe3f1;
+        }
+
+        .btn {
+            background: #1f5f85;
+            border: none;
+            color: white;
+            padding: 12px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background: #174a68;
+        }
+
+        select {
+            background: #1f5f85;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            outline: none;
+            min-width: 160px;
+        }
+
+        select:hover {
+            background: #174a68;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: #d6d9dd;
+        }
+
+        th {
+            padding: 14px;
+            font-weight: 600;
+            color: #333;
+            text-align: left;
+            border-bottom: 1px solid #c5c8cc;
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #e0e3e7;
+            color: #333;
+        }
+
+        tr:hover {
+            background: #f2f5f8;
+        }
+
+        .col-nome {
+            width: 45%;
+        }
+
+        .col-cpf {
+            width: 20%;
+            text-align: center;
+        }
+
+        .col-status {
+            width: 15%;
+            text-align: center;
+        }
+
+        .col-perfil {
+            width: 20%;
+            text-align: center;
+        }
+
+        .col-status {
+            text-transform: capitalize;
+            font-weight: 500;
+        }
+
+        .btn-perfil {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #2d2d2d;
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+
+        .btn-perfil:hover {
+            background: #444;
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+            }
+
+            select,
+            .btn,
+            .search-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="top-bar">
+            <input type="text" id="search" class="search-input" placeholder="Digite o nome ou CPF">
+
+            <button class="btn" onclick="filtrar()">🔍</button>
+
+            <select id="statusFilter" onchange="filtrar()">
+                <option value="todos">Ativos ou inativos</option>
+                <option value="ativo">Ativos</option>
+                <option value="inativo">Inativos</option>
+            </select>
+
+            <select id="orderFilter" onchange="filtrar()">
+                <option value="nome">Nome</option>
+                <option value="cpf">CPF</option>
+            </select>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>Status</th>
+                    <th>Perfil</th>
+                </tr>
+            </thead>
+            <tbody id="tabela"></tbody>
+        </table>
+
+    </div>
+
+    <script>
+        const dados = [
+            { id: 1, nome: "Ana Souza", cpf: "123.456.789-01", status: "ativo" },
+            { id: 2, nome: "Carlos Lima", cpf: "987.654.321-00", status: "inativo" },
+            { id: 3, nome: "Bruno Alves", cpf: "456.123.789-00", status: "ativo" },
+            { id: 4, nome: "Daniel Rocha", cpf: "321.654.987-11", status: "inativo" },
+            { id: 5, nome: "Eduarda Costa", cpf: "159.753.486-20", status: "ativo" },
+            { id: 6, nome: "Felipe Martins", cpf: "741.852.963-10", status: "ativo" },
+            { id: 7, nome: "Gabriela Oliveira", cpf: "852.963.741-22", status: "inativo" },
+            { id: 8, nome: "Henrique Souza", cpf: "963.741.852-33", status: "ativo" },
+            { id: 9, nome: "Isabela Fernandes", cpf: "147.258.369-44", status: "ativo" },
+            { id: 10, nome: "João Pedro", cpf: "258.369.147-55", status: "inativo" },
+
+            { id: 11, nome: "Karina Batista", cpf: "369.147.258-66", status: "ativo" },
+            { id: 12, nome: "Lucas Ribeiro", cpf: "159.357.258-77", status: "ativo" },
+            { id: 13, nome: "Mariana Lopes", cpf: "753.159.456-88", status: "inativo" },
+            { id: 14, nome: "Nicolas Duarte", cpf: "951.753.852-99", status: "ativo" },
+            { id: 15, nome: "Otávio Mendes", cpf: "357.951.654-00", status: "ativo" },
+            { id: 16, nome: "Patrícia Gomes", cpf: "852.456.951-11", status: "inativo" },
+            { id: 17, nome: "Rafael Teixeira", cpf: "654.852.147-22", status: "ativo" },
+            { id: 18, nome: "Sandra Carvalho", cpf: "147.654.258-33", status: "ativo" },
+            { id: 19, nome: "Thiago Moreira", cpf: "258.147.369-44", status: "inativo" },
+            { id: 20, nome: "Vanessa Ribeiro", cpf: "369.258.147-55", status: "ativo" },
+
+        ];
+
+        function render(lista) {
+            const tabela = document.getElementById("tabela");
+            tabela.innerHTML = "";
+
+            lista.forEach(item => {
+                tabela.innerHTML += `
+            <tr>
+                <td class="col-nome">${item.nome}</td>
+                <td class="col-cpf">${item.cpf}</td>
+                <td class="col-status">${item.status}</td>
+                <td class="col-perfil">
+                    <a href="controleponto.html?id=${item.id}" class="btn-perfil">
+                        Ver perfil
+                    </a>
+                </td>
+            </tr>
+        `;
+            });
+        }
+
+        function filtrar() {
+            let lista = [...dados];
+
+            const texto = document.getElementById("search").value.toLowerCase();
+            const status = document.getElementById("statusFilter").value;
+            const ordem = document.getElementById("orderFilter").value;
+
+            if (texto) {
+                lista = lista.filter(item =>
+                    item.nome.toLowerCase().includes(texto) ||
+                    item.cpf.includes(texto)
+                );
+            }
+
+            if (status !== "todos") {
+                lista = lista.filter(item => item.status === status);
+            }
+
+            if (ordem === "nome") {
+                lista.sort((a, b) => a.nome.localeCompare(b.nome));
+            } else {
+                lista.sort((a, b) => a.cpf.localeCompare(b.cpf));
+            }
+
+            render(lista);
+        }
+
+        // inicial
+        render(dados);
+    </script>
+
+</body>
+
+</html>
