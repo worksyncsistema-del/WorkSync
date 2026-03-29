@@ -58,7 +58,11 @@ atualizarStatus();
 
 function carregarUsuario() {
   const nome = localStorage.getItem("usuarioNome");
-  document.getElementById("nomeUsuario").textContent = nome;
+  const el = document.getElementById("nomeUsuario");
+
+  if (el) {
+    el.textContent = nome;
+  }
 }
 
 carregarUsuario();

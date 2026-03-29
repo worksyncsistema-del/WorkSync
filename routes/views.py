@@ -3,6 +3,10 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from utils.auth_decorator import login_required
 from flask import Flask, render_template
+from db import conectar_bd
+from flask import request
+from flask import request, render_template
+import psycopg2.extras
 
 app = Flask(__name__)
 
@@ -75,11 +79,70 @@ def redefinicao_senha():
 def gerenciar_usuario():
     return render_template('gerenciarUsuario.html')
 
-from flask import request
-
 @views_bp.route("/editarUsuario")
+@login_required
 def editar_usuario():
-    return render_template("editarUsuario.html")
+    user_id = request.args.get("id")
+
+    modo = request.args.get("modo", "consultar")
+
+    conn = conectar_bd()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    cursor.execute("""
+        SELECT 
+            u.id,
+            u.nome,
+            u.email,
+            u.telefone,
+            u.cpf,
+            f.cargo,
+            f.setor,
+            f.tipo_perfil
+        FROM usuarios u
+        LEFT JOIN funcionarios f ON u.id = f.usuario_id
+        WHERE u.id = %s
+    """, (user_id,))
+
+    usuario = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not usuario:
+        return "Usuário não encontrado", 404
+
+    return render_template("editarUsuario.html", usuario=usuario, modo=modo)
+
+# =========================
+# LISTAGEM DE USUÁRIOS
+# =========================
+
+from flask import jsonify
+import psycopg2.extras
+
+@views_bp.route("/listarUsuarios")
+@login_required
+def listar_usuarios():
+    try:
+        conn = conectar_bd()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+        cursor.execute("""
+            SELECT id, nome, cpf, 'ativo' as status
+            FROM usuarios
+        """)
+
+        usuarios = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify(usuarios)
+
+    except Exception as e:
+        print("ERRO:", e)
+        return jsonify([]), 500
 
 # =========================
 # HORA DO SERVIDOR

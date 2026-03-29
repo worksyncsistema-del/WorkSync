@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastroUsuario.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/editarUsuario.css') }}">
 </head>
 
 <body>
@@ -27,22 +27,23 @@
                     <div class="campos">
                         <div class="campo">
                             <label>Nome</label>
-                            <input type="text" id="nome">
+                            <input type="text" id="nome" value="{{ usuario.nome }}" 
+                            {% if modo != 'editar' %}readonly{% endif %}>
                         </div>
 
                         <div class="campo">
                             <label>Email</label>
-                            <input type="text" id="email">
+                            <input type="text" id="email" value="{{ usuario.email }}" readonly>
                         </div>
 
                         <div class="campo">
                             <label>Telefone</label>
-                            <input type="text" id="telefone">
+                            <input type="text" id="telefone" value="{{ usuario.telefone }}" readonly>
                         </div>
 
                         <div class="campo">
                             <label>CPF</label>
-                            <input type="text" id="cpf">
+                            <input type="text" id="cpf" value="{{ usuario.cpf }}" readonly>
                         </div>
                     </div>
                 </div>
@@ -56,23 +57,23 @@
 
                     <div class="campo">
                         <label>Cargo</label>
-                        <select id="cargo">
+                        <select id="cargo" {% if modo != 'editar' %}disabled{% endif %}>
                             <option value="">Selecione</option>
-                            <option value="analista">Analista</option>
-                            <option value="assistente">Assistente</option>
-                            <option value="Gerente">Gerente</option>
-                            <option value="coordenador">Coordenador</option>
+                            <option value="analista" {% if usuario.cargo == 'analista' %}selected{% endif %}>Analista</option>
+                            <option value="assistente" {% if usuario.cargo == 'assistente' %}selected{% endif %}>Assistente</option>
+                            <option value="Gerente" {% if usuario.cargo == 'Gerente' %}selected{% endif %}>Gerente</option>
+                            <option value="coordenador" {% if usuario.cargo == 'coordenador' %}selected{% endif %}>Coordenador</option>
                         </select>
                     </div>
 
                     <div class="campo">
                         <label>Setor</label>
-                        <select id="setor">
+                        <select id="setor" disabled>
                             <option value="">Selecione</option>
-                            <option value="rh">RH</option>
-                            <option value="financeiro">Financeiro</option>
-                            <option value="ti">TI</option>
-                            <option value="comercial">Comercial</option>
+                            <option value="rh" {% if usuario.setor == 'rh' %}selected{% endif %}>RH</option>
+                            <option value="financeiro" {% if usuario.setor == 'financeiro' %}selected{% endif %}>Financeiro</option>
+                            <option value="ti" {% if usuario.setor == 'ti' %}selected{% endif %}>TI</option>
+                            <option value="comercial" {% if usuario.setor == 'comercial' %}selected{% endif %}>Comercial</option>
                         </select>
                     </div>
 
@@ -342,8 +343,6 @@
 
         </div>
     </form>
-
-    <script src="{{ url_for('static', filename='js/cadastroUsuario.js') }}"></script>
 
 </body>
 
