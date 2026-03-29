@@ -27,23 +27,22 @@
                     <div class="campos">
                         <div class="campo">
                             <label>Nome</label>
-                            <input type="text" id="nome" value="{{ usuario.nome }}" 
-                            {% if modo != 'editar' %}readonly{% endif %}>
+                            <input type="text" id="nome" class="campo-editavel" value="{{ usuario.nome }}" readonly>
                         </div>
 
                         <div class="campo">
                             <label>Email</label>
-                            <input type="text" id="email" value="{{ usuario.email }}" readonly>
+                            <input type="text" id="email" class="campo-editavel" value="{{ usuario.email }}" readonly>
                         </div>
 
                         <div class="campo">
                             <label>Telefone</label>
-                            <input type="text" id="telefone" value="{{ usuario.telefone }}" readonly>
+                            <input type="text" id="telefone" class="campo-editavel" value="{{ usuario.telefone }}" readonly>
                         </div>
 
                         <div class="campo">
                             <label>CPF</label>
-                            <input type="text" id="cpf" value="{{ usuario.cpf }}" readonly>
+                            <input type="text" id="cpf" class="campo-editavel" value="{{ usuario.cpf }}" readonly>
                         </div>
                     </div>
                 </div>
@@ -57,7 +56,7 @@
 
                     <div class="campo">
                         <label>Cargo</label>
-                        <select id="cargo" {% if modo != 'editar' %}disabled{% endif %}>
+                        <select id="cargo" class="campo-editavel" disabled>
                             <option value="">Selecione</option>
                             <option value="analista" {% if usuario.cargo == 'analista' %}selected{% endif %}>Analista</option>
                             <option value="assistente" {% if usuario.cargo == 'assistente' %}selected{% endif %}>Assistente</option>
@@ -338,11 +337,71 @@
                 </div>
                 <!-- AÇÕES -->
                 <div class="acoes">
-                    <button type="button" class="btn-cad" onclick="cadastrarUsuario()">Salvar Cadastro</button>
+                    <button type="button" class="btn-alterar" onclick="alterarDados()">Alterar Dados</button>
+                    <button type="button" id="btnSalvar" class="btn-alterar" style="display:none;" onclick="salvarAlteracoes()">Salvar</button>
                 </div>
 
         </div>
     </form>
+
+    <script>
+        function alterarDados() {
+            window.alert("clicou");
+            document.querySelectorAll(".campo-editavel").forEach(el => {
+                if (el.tagName === "INPUT") {
+                    el.readOnly = false;
+                } else {
+                    el.disabled = false;
+                }
+            });
+            document.getElementById("btnSalvar").style.display = "inline-block";
+        }
+
+        function bloquearCampos() {
+                document.querySelectorAll(".campo-editavel").forEach(el => {
+
+                    if (el.tagName === "INPUT") {
+                        el.readOnly = true;
+                    }
+
+                    if (el.tagName === "SELECT") {
+                        el.disabled = true;
+                    }
+                });
+            }
+
+        async function salvarAlteracoes() {
+
+                const nome = document.getElementById("nome").value;
+
+                const params = new URLSearchParams(window.location.search);
+                const id = params.get("id");
+
+                console.log("Enviando:", nome, id);
+
+                const res = await fetch("/atualizar_usuario", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        nome: nome
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.status === "ok") {
+                    alert("Nome atualizado com sucesso!");
+                    bloquearCampos();
+                    document.getElementById("btnSalvar").style.display = "none";
+                    window.location.href = "/gerenciarUsuario";
+                } else {
+                    alert("Erro ao atualizar");
+                }
+            }
+    </script>
 
 </body>
 

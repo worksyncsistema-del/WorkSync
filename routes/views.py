@@ -7,6 +7,7 @@ from db import conectar_bd
 from flask import request
 from flask import request, render_template
 import psycopg2.extras
+from flask import request, jsonify
 
 app = Flask(__name__)
 
@@ -84,8 +85,6 @@ def gerenciar_usuario():
 def editar_usuario():
     user_id = request.args.get("id")
 
-    modo = request.args.get("modo", "consultar")
-
     conn = conectar_bd()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
@@ -112,7 +111,7 @@ def editar_usuario():
     if not usuario:
         return "Usuário não encontrado", 404
 
-    return render_template("editarUsuario.html", usuario=usuario, modo=modo)
+    return render_template("editarUsuario.html", usuario=usuario)
 
 # =========================
 # LISTAGEM DE USUÁRIOS
@@ -143,6 +142,38 @@ def listar_usuarios():
     except Exception as e:
         print("ERRO:", e)
         return jsonify([]), 500
+
+# =========================
+# ALTERAÇÃO NO BANCO DE DADOS
+# =========================
+
+@views_bp.route("/atualizar_usuario", methods=["POST"])
+def atualizar_usuario():
+    try:
+        dados = request.get_json()
+
+        user_id = dados.get("id")
+        nome = dados.get("nome")
+
+        conn = conectar_bd()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            UPDATE usuarios
+            SET nome = %s
+            WHERE id = %s
+        """, (nome, user_id))
+
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({"status": "ok"})
+
+    except Exception as e:
+        print("ERRO:", e)
+        return jsonify({"status": "erro"})
 
 # =========================
 # HORA DO SERVIDOR
