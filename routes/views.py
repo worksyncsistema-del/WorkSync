@@ -80,6 +80,11 @@ def redefinicao_senha():
 def gerenciar_usuario():
     return render_template('gerenciarUsuario.html')
 
+@views_bp.route("/configuracoes")
+@login_required
+def configuracoes():
+    return render_template("configuracoes.html")
+
 @views_bp.route("/editarUsuario")
 @login_required
 def editar_usuario():

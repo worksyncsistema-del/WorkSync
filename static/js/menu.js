@@ -1,11 +1,3 @@
-const items = document.querySelectorAll(".sidebar li a");
-
-items.forEach(item => {
-  item.addEventListener("click", () => {
-    items.forEach(i => i.parentElement.classList.remove("active"));
-    item.parentElement.classList.add("active");
-  });
-});
 const links = document.querySelectorAll(".sidebar a");
 
 links.forEach(link => {
@@ -16,28 +8,22 @@ links.forEach(link => {
 });
 
 async function atualizarRelogio() {
-  const resposta = await fetch(
-    "/hora-servidor",
-  );
+  const resposta = await fetch("/hora-servidor");
   const dados = await resposta.json();
 
   document.getElementById("hora").textContent = dados.hora;
   document.getElementById("data").textContent =
-  `${dados.dia}, ${dados.data}`;
+    `${dados.dia}, ${dados.data}`;
 }
 
 setInterval(atualizarRelogio, 1000);
 atualizarRelogio();
 
 async function atualizarStatus() {
-  const resposta = await fetch(
-    "/status",
-  );
+  const resposta = await fetch("/status");
   const dados = await resposta.json();
 
   const statusEl = document.getElementById("status");
-
-  // 👤 pega nome salvo no login
   const nome = localStorage.getItem("usuarioNome") || "";
 
   if (dados.status === "expediente") {
@@ -52,7 +38,6 @@ async function atualizarStatus() {
   }
 }
 
-// atualiza a cada 5 segundos
 setInterval(atualizarStatus, 5000);
 atualizarStatus();
 
@@ -66,3 +51,31 @@ function carregarUsuario() {
 }
 
 carregarUsuario();
+
+
+// 🌙 AQUI É O TEMA GLOBAL (CORRIGIDO)
+function aplicarTemaGlobal() {
+  const tema = localStorage.getItem("tema") || "light";
+
+  if (tema === "dark") {
+    document.body.classList.add("dark-mode");
+  } else {
+    document.body.classList.remove("dark-mode");
+  }
+
+  const iframe = document.querySelector("iframe");
+
+  if (iframe) {
+    iframe.onload = () => {
+      const temaAtual = localStorage.getItem("tema") || "light";
+
+      if (temaAtual === "dark") {
+        iframe.contentWindow.document.body.classList.add("dark-mode");
+      } else {
+        iframe.contentWindow.document.body.classList.remove("dark-mode");
+      }
+    };
+  }
+}
+
+aplicarTemaGlobal();

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WorkSync — Configurações</title>
+  <link rel="stylesheet" href="static/css/configuracoes.css">
+    <link rel="stylesheet" href="static/css/dark-mode.css">
+</head>
+<body>
+
+  <header></header>
+
+  <main>
+    <div class="card">
+      <div class="form-group">
+        <label>Fuso horário</label>
+        <select>
+          <option selected>America/Sao_Paulo (GMT-3)</option>
+          <option>America/Manaus (GMT-4)</option>
+          <option>America/Belem (GMT-3)</option>
+          <option>America/Fortaleza (GMT-3)</option>
+        </select>
+      </div>
+
+      <div class="actions" style="margin-top:20px;">
+        <button class="btn-secondary">Cancelar</button>
+        <button class="btn-primary">Salvar alterações</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Notificações</div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span>Alertas de atraso</span>
+          <small>Notificação automática ao registrar entrada com atraso</small>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span>Lembrete de registro de ponto</span>
+          <small>Aviso próximo ao horário de entrada, intervalo e saída</small>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span>Notificações do gestor</span>
+          <small>Receba mensagens e aprovações enviadas pelo seu gestor</small>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Aparência</div>
+
+      <div class="form-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px,1fr));">
+        <div class="form-group">
+          <label>Tema</label>
+
+          <div class="radio-group" style="margin-top:2px; display:flex; flex-direction:column; gap:8px;">
+            <label class="radio-option">
+              <input type="radio" name="tema" value="light" checked /> Claro
+            </label>
+
+            <label class="radio-option">
+              <input type="radio" name="tema" value="dark" /> Escuro
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:20px;">
+        <button id="restaurar-tema" class="btn-secondary">Restaurar padrão</button>
+        <button id="aplicar-tema" class="btn-primary">Aplicar</button>      </div>
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
+</body>
+</html>
