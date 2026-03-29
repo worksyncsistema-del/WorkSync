@@ -1,139 +1,178 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Controle de Ponto</title>
 
-  <!-- Fonte Montserrat -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-    rel="stylesheet">
-
-  <!-- CSS da página -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/controleponto.css') }}">
 </head>
 
 <body>
 
-  <div class="controleponto">
+<div class="controle-page">
 
-    <!-- TOPO / RESUMO -->
-    <section class="topo-ponto">
+  <!-- TOPO (JORNADA + FILTRO) -->
+  <div class="topo">
 
-      <div class="usuario">
-        <div class="foto"></div>
+    <!-- JORNADA -->
+    <section class="card jornada">
+      <div class="jornada-linha">
 
-        <div class="info">
-          <h2>João Pereira dos Santos</h2>
-          <span>Analista de Sistemas</span>
-        </div>
-      </div>
-
-      <div class="status-ponto">
-        <div class="card-status">
-          <span class="titulo-status">Último ponto</span>
-          <strong class="hora-status">11:31</strong>
-          <span class="data-status">10/05/2025</span>
+        <div class="resumo-item">
+          <span class="jornada-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Entrada
+          </span>
+          <p class="jornada-hora">08:00</p>
         </div>
 
-        <div class="card-status proximo">
-          <span class="titulo-status">Próximo ponto</span>
-          <strong class="hora-status">Em 1h30</strong>
-          <span class="data-status">11/05/2025</span>
-        </div>
-      </div>
+        <div class="jornada-divider"></div>
 
-    </section>
-
-    <!-- REGISTROS DO DIA -->
-    <section class="registros-dia">
-      <div class="registro">Entrada<br><strong>08:00</strong></div>
-      <div class="registro">Saída intervalo<br><strong>11:30</strong></div>
-      <div class="registro">Volta intervalo<br><strong>13:00</strong></div>
-      <div class="registro">Saída<br><strong>17:00</strong></div>
-    </section>
-
-    <!-- FILTRO DE RELATÓRIO -->
-    <section class="filtro-relatorio">
-      <div class="filtro-box">
-
-        <div class="campo-data">
-          <label>Início relatório</label>
-          <input type="date">
+        <div class="resumo-item">
+          <span class="jornada-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            Saída intervalo
+          </span>
+          <p class="jornada-hora">11:30</p>
         </div>
 
-        <div class="campo-data">
-          <label>Final relatório</label>
-          <input type="date">
+        <div class="jornada-divider"></div>
+
+        <div class="resumo-item">
+          <span class="jornada-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            Volta intervalo
+          </span>
+          <p class="jornada-hora">13:00</p>
         </div>
 
-        <div> <button> Pesquisar </button>
+        <div class="jornada-divider"></div>
+
+        <div class="resumo-item">
+          <span class="jornada-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Saída
+          </span>
+          <p class="jornada-hora">17:00</p>
         </div>
 
       </div>
     </section>
 
-    <!-- TABELA -->
-    <section class="tabela-pontos">
-      <table>
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Início</th>
-            <th>Início Interv.</th>
-            <th>Volta Interv.</th>
-            <th>Término</th>
-          </tr>
-        </thead>
+    <!-- FILTRO -->
+    <section class="card filtro">
+ 
 
-        <tbody>
-          <tr>
-            <td>Segunda</td>
-            <td class="ok">08:00</td>
-            <td class="ok">11:30</td>
-            <td class="alerta">13:06</td>
-            <td class="ok">17:02</td>
-          </tr>
-
-          <tr>
-            <td>Terça</td>
-            <td class="erro">08:12</td>
-            <td class="ok">11:34</td>
-            <td class="ok">13:00</td>
-            <td class="ok">17:01</td>
-          </tr>
-
-          <tr>
-            <td>Quarta</td>
-            <td class="ok">08:00</td>
-            <td class="ok">11:30</td>
-            <td class="alerta">13:06</td>
-            <td class="ok">17:02</td>
-          </tr>
-
-          <tr>
-            <td>Quinta</td>
-            <td class="erro">08:12</td>
-            <td class="ok">11:34</td>
-            <td class="ok">13:00</td>
-            <td class="ok">17:01</td>
-          </tr>
-
-          <tr>
-            <td>Sexta</td>
-            <td class="ok">08:00</td>
-            <td class="ok">11:30</td>
-            <td class="alerta">13:06</td>
-            <td class="ok">17:02</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="filtro-linha">
+        <div class="input-group">
+          <label for="dataInicio">De</label>
+          <input type="text" id="dataInicio" class="data" placeholder="dd/mm/aaaa">
+        </div>
+        <div class="input-group">
+          <label for="dataFim">Até</label>
+          <input type="text" id="dataFim" class="data" placeholder="dd/mm/aaaa">
+        </div>
+        <button class="btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Pesquisar
+        </button>
+      </div>
     </section>
 
   </div>
 
-</body>
+  <!-- TABELA -->
+  <section class="card tabela-container">
 
+    <div class="tabela-header">
+  
+      <div class="legenda">
+        <span class="legenda-item"><span class="dot ok-dot"></span> No horário</span>
+        <span class="legenda-item"><span class="dot alerta-dot"></span> Tolerância</span>
+        <span class="legenda-item"><span class="dot erro-dot"></span> Atraso</span>
+      </div>
+    </div>
+
+    <table class="tabela">
+      <thead>
+        <tr>
+          <th>Dia</th>
+          <th>Entrada</th>
+          <th>Saída Int.</th>
+          <th>Volta Int.</th>
+          <th>Saída</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr class="hoje">
+          <td><span class="dia-label">Segunda</span><span class="hoje-badge">Hoje</span></td>
+          <td><div class="hora ok">08:00</div></td>
+          <td><div class="hora ok">11:30</div></td>
+          <td><div class="hora alerta">13:06</div></td>
+          <td><div class="hora ok">17:02</div></td>
+          <td><span class="total-horas">8h02</span></td>
+        </tr>
+
+        <tr>
+          <td><span class="dia-label">Terça</span></td>
+          <td><div class="hora erro">08:12</div></td>
+          <td><div class="hora ok">11:34</div></td>
+          <td><div class="hora ok">13:00</div></td>
+          <td><div class="hora ok">17:01</div></td>
+          <td><span class="total-horas">8h49</span></td>
+        </tr>
+
+        <tr>
+          <td><span class="dia-label">Quarta</span></td>
+          <td><div class="hora ok">08:00</div></td>
+          <td><div class="hora ok">11:30</div></td>
+          <td><div class="hora alerta">13:06</div></td>
+          <td><div class="hora ok">17:02</div></td>
+          <td><span class="total-horas">8h02</span></td>
+        </tr>
+
+        <tr>
+          <td><span class="dia-label">Quinta</span></td>
+          <td><div class="hora erro">08:12</div></td>
+          <td><div class="hora ok">11:34</div></td>
+          <td><div class="hora ok">13:00</div></td>
+          <td><div class="hora ok">17:01</div></td>
+          <td><span class="total-horas">8h49</span></td>
+        </tr>
+
+        <tr>
+          <td><span class="dia-label">Sexta</span></td>
+          <td><div class="hora ok">08:00</div></td>
+          <td><div class="hora ok">11:30</div></td>
+          <td><div class="hora alerta">13:06</div></td>
+          <td><div class="hora ok">17:02</div></td>
+          <td><span class="total-horas">8h02</span></td>
+        </tr>
+
+      </tbody>
+    </table>
+
+  </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/pt.js"></script>
+<script>
+  const fpConfig = {
+    dateFormat: "d/m/Y",
+    locale: "pt",
+    disableMobile: true
+  };
+  flatpickr("#dataInicio", fpConfig);
+  flatpickr("#dataFim", fpConfig);
+</script>
+</body>
 </html>
