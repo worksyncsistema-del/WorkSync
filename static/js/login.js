@@ -66,48 +66,44 @@ function verificarCPF() {
 }
 
 // acessa o sistema
-function login() {
+function login(event) {
   console.log("LOGIN FOI CHAMADO");
+
+  if (event) event.preventDefault(); // 🔥 ESSENCIAL
+
   const campoCPF = document.getElementById("cpf");
   const campoSenha = document.getElementById("senha");
 
-  // 🔴 Campos vazios
   if (campoCPF.value === "" || campoSenha.value === "") {
     alert("Foram encontrados campos vazios. Tente novamente.");
     return;
   }
 
-  // 🔴 CPF inválido (sua função existente)
   if (!verificarCPF()) {
     return;
   }
 
-  // 🟢 Remove tudo que não for número do CPF
   const cpf = campoCPF.value.replace(/\D/g, "");
-
   const senha = campoSenha.value;
 
-  console.log("Enviando login...");
-  // 🟢 Enviar para o backend Python
   fetch("/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      cpf: cpf,
-      senha: senha,
-    }),
+    credentials: "include",
+    body: JSON.stringify({ cpf, senha }),
   })
     .then((response) => response.json())
     .then((data) => {
-      if (data.status === "ok") {
-        // ✅ Login válido
-        localStorage.setItem("usuarioNome", data.nome);
+      console.log("RESPOSTA:", data);
+
+      if (data.ok) {
+        console.log("REDIRECIONANDO...");
+        sessionStorage.setItem("usuarioNome", data.nome); // 🔥 FALTAVA ISSO
         window.location.href = "/menu";
       } else {
-        // ❌ Login inválido
-        alert("CPF ou senha incorretos.");
+        alert(data.erro || "Erro no login");
       }
     })
     .catch((error) => {
@@ -115,7 +111,6 @@ function login() {
       alert("Erro ao conectar com o servidor.");
     });
 }
-
 // Inicializar EmailJS
 emailjs.init("j2V8vMJBNoT3bmpRt");
 

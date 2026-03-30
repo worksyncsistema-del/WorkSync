@@ -2,22 +2,15 @@ from flask import Blueprint, render_template, redirect, url_for
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from utils.auth_decorator import login_required
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify, session
 from db import conectar_bd
-from flask import request
 from flask import request, render_template
 import psycopg2.extras
-from flask import request, jsonify
 from db import buscar_usuario_por_email, salvar_token
 import secrets
 from werkzeug.security import generate_password_hash
 from db import buscar_usuario_por_email, atualizar_senha, limpar_token
-
-app = Flask(__name__)
-
-@app.route('/menu')
-def menu():
-    return render_template('menu.html')
+from werkzeug.security import check_password_hash
 
 views_bp = Blueprint("views", __name__)
 
@@ -32,6 +25,59 @@ def home():
 def login_page():
     return render_template("login.html")
 
+
+@views_bp.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+
+    cpf = data.get('cpf')
+    senha = data.get('senha')
+
+    cpf = cpf.replace('.', '').replace('-', '').strip()
+    senha = senha.strip()
+
+    print("CPF recebido:", cpf)
+
+    conn = conectar_bd()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    cursor.execute("""
+        SELECT id, nome, cpf, senha_hash
+        FROM usuarios 
+        WHERE REPLACE(REPLACE(cpf, '.', ''), '-', '') = %s
+    """, (cpf,))
+
+    user = cursor.fetchone()
+    conn.close()
+
+    print("Usuário encontrado:", user)
+
+    # ❌ usuário não existe
+    if not user:
+        return jsonify({'erro': 'CPF não encontrado'}), 404
+
+    # ❌ usuário sem senha ainda
+    if not user['senha_hash']:
+        return jsonify({'erro': 'Usuário ainda não definiu senha'}), 400
+
+    print("Hash no banco:", user['senha_hash'])
+    print("Senha digitada:", senha)
+
+    resultado = check_password_hash(user['senha_hash'], senha)
+    print("Resultado check:", resultado)
+
+    # ❌ senha errada
+    if not resultado:
+        return jsonify({'erro': 'Senha incorreta'}), 401
+
+    # 🔐 cria sessão
+    session['user_id'] = user['id']
+
+    return jsonify({
+        'ok': True,
+        'nome': user['nome']
+    }), 200
+
 @views_bp.route("/recuperacaoSenha")
 def recuperacao_senha():
     return render_template("recuperacaoSenha.html")
@@ -43,7 +89,14 @@ def recuperacao_senha():
 @views_bp.route("/menu")
 @login_required
 def menu():
-    return render_template("menu.html")
+    conn = conectar_bd()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    cursor.execute("SELECT nome FROM usuarios WHERE id = %s", (session['user_id'],))
+    user = cursor.fetchone()
+    conn.close()
+
+    return render_template("menu.html", nome=user['nome'])
 
 # =========================
 # TELAS DENTRO DO MENU
@@ -303,6 +356,8 @@ def resetar_senha():
 
     # 🧹 limpa token
     limpar_token(user['id'])
+
+    session.clear();
 
     return jsonify({'ok': True}), 200
 

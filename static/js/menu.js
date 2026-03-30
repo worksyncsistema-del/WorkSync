@@ -24,7 +24,7 @@ async function atualizarStatus() {
   const dados = await resposta.json();
 
   const statusEl = document.getElementById("status");
-  const nome = localStorage.getItem("usuarioNome") || "";
+  const nome = sessionStorage.getItem("usuarioNome") || "";
 
   if (dados.status === "expediente") {
     statusEl.textContent = `🟢 Em expediente — ${nome}`;

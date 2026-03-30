@@ -104,7 +104,7 @@ async function redefinirSenhaFinal() {
 
   if (response.ok) {
     alert("Senha redefinida!");
-    window.location.href = "/";
+    window.location.href = "/login-page";
   } else {
     alert(data.erro);
   }

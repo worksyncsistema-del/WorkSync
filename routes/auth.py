@@ -7,7 +7,7 @@ auth_bp = Blueprint("auth", __name__)
 # =========================
 # LOGIN DEV (CPF)
 # =========================
-@auth_bp.route("/login", methods=["POST"])
+@auth_bp.route("/login-dev", methods=["POST"])
 def login():
     try:
         dados = request.get_json()
