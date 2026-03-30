@@ -52,11 +52,9 @@ def login():
 
     print("Usuário encontrado:", user)
 
-    # ❌ usuário não existe
     if not user:
         return jsonify({'erro': 'CPF não encontrado'}), 404
 
-    # ❌ usuário sem senha ainda
     if not user['senha_hash']:
         return jsonify({'erro': 'Usuário ainda não definiu senha'}), 400
 
@@ -66,11 +64,9 @@ def login():
     resultado = check_password_hash(user['senha_hash'], senha)
     print("Resultado check:", resultado)
 
-    # ❌ senha errada
     if not resultado:
         return jsonify({'erro': 'Senha incorreta'}), 401
 
-    # 🔐 cria sessão
     session['user_id'] = user['id']
 
     return jsonify({
@@ -338,23 +334,18 @@ def resetar_senha():
     token = data.get('token')
     senha = data.get('senha')
 
-    # 🔍 valida usuário
     user = buscar_usuario_por_email(email)
 
     if not user:
         return jsonify({'erro': 'Usuário não encontrado'}), 404
 
-    # 🔐 valida token
     if user['token_reset'] != token:
         return jsonify({'erro': 'Token inválido'}), 400
 
-    # 🔒 cria hash da senha
     senha_hash = generate_password_hash(senha)
 
-    # 💾 salva no banco
     atualizar_senha(user['id'], senha_hash)
 
-    # 🧹 limpa token
     limpar_token(user['id'])
 
     session.clear();
