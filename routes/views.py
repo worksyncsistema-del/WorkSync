@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from utils.auth_decorator import login_required
+from utils.auth_decorator import login_required, admin_required
 from flask import Flask, render_template, jsonify, session
 from db import conectar_bd
 from flask import request, render_template
@@ -42,10 +42,11 @@ def login():
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     cursor.execute("""
-        SELECT id, nome, cpf, senha_hash
-        FROM usuarios 
-        WHERE REPLACE(REPLACE(cpf, '.', ''), '-', '') = %s
-    """, (cpf,))
+    SELECT u.id, u.nome, u.cpf, u.senha_hash, f.tipo_perfil
+    FROM usuarios u
+    INNER JOIN funcionarios f ON u.id = f.usuario_id
+    WHERE REPLACE(REPLACE(u.cpf, '.', ''), '-', '') = %s
+""", (cpf,))
 
     user = cursor.fetchone()
     conn.close()
@@ -68,11 +69,13 @@ def login():
         return jsonify({'erro': 'Senha incorreta'}), 401
 
     session['user_id'] = user['id']
+    session['tipo'] = user['tipo_perfil']
 
     return jsonify({
-        'ok': True,
-        'nome': user['nome']
-    }), 200
+    'ok': True,
+    'nome': user['nome'],
+    'tipo': user['tipo_perfil']  # 🔥
+}), 200
 
 @views_bp.route("/recuperacaoSenha")
 def recuperacao_senha():
@@ -129,6 +132,8 @@ def redefinicao_senha():
     return render_template("redefinicaoSenha.html")
 
 @views_bp.route('/gerenciarUsuario')
+@login_required
+@admin_required
 def gerenciar_usuario():
     return render_template('gerenciarUsuario.html')
 

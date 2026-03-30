@@ -96,7 +96,8 @@ function login(event) {
     .then((data) => {
 
       if (data.ok) {
-        sessionStorage.setItem("usuarioNome", data.nome); // 🔥 FALTAVA ISSO
+        sessionStorage.setItem("usuarioNome", data.nome);
+        sessionStorage.setItem("tipo", data.tipo); // 🔥 FALTAVA ISSO
         window.location.href = "/menu";
       } else {
         alert(data.erro || "Erro no login");

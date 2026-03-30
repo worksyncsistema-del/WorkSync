@@ -8,3 +8,15 @@ def login_required(f):
             return redirect(url_for("auth.login_page"))
         return f(*args, **kwargs)
     return decorated_function
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            return redirect(url_for("auth.login_page"))
+
+        if session.get("tipo") != "admin":
+            return "Acesso negado", 403
+
+        return f(*args, **kwargs)
+    return decorated_function
