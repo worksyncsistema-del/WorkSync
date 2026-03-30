@@ -28,10 +28,10 @@ function mostrarSenha() {
 function verificarCPF() {
   let campoCPF = document.getElementById("cpf").value;
   let soma = 0;
-  campoCPF = campoCPF.replace(/\D/g, ""); 
+  campoCPF = campoCPF.replace(/\D/g, "");
   let CPF = campoCPF.split("").map(Number);
 
-  for (let i = 0; i <= 8; i++){
+  for (let i = 0; i <= 8; i++) {
     soma += CPF[i] * (10 - i);
   }
 
@@ -45,10 +45,10 @@ function verificarCPF() {
 
   soma = 0;
 
-   for (let i = 0; i <= 9; i++) {
-     soma += CPF[i] * (11 - i);
+  for (let i = 0; i <= 9; i++) {
+    soma += CPF[i] * (11 - i);
   }
-  
+
   let digito2 = soma % 11;
 
   if (digito2 < 2) {
@@ -116,7 +116,6 @@ function login() {
     });
 }
 
-
 // Inicializar EmailJS
 emailjs.init("j2V8vMJBNoT3bmpRt");
 
@@ -141,41 +140,44 @@ function enviarEmail() {
     });
 }
 
-function toggleSenha(el){
-
+function toggleSenha(el) {
   const box = el.closest(".password-box");
   const input = box.querySelector("input");
 
-  if(input.type === "password"){
+  if (input.type === "password") {
     input.type = "text";
     el.classList.remove("show"); // visível = sem risco
-  }else{
+  } else {
     input.type = "password";
     el.classList.add("show"); // oculto = olho riscado
   }
-
 }
 
 function gerarCodigo() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-function enviarCodigo() {
+async function enviarCodigo() {
   const email = document.getElementById("email").value;
 
-  if (!email) {
-    alert("Digite um e-mail");
-    return;
+  console.log("EMAIL:", email); // 👈 coloca isso pra testar
+
+  const response = await fetch("/enviar-token", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+
+  const data = await response.json();
+
+  if (response.ok) {
+    // 🔥 ESSA LINHA É OBRIGATÓRIA
+    sessionStorage.setItem("email", email);
+
+    console.log("SALVO:", sessionStorage.getItem("email"));
+
+    window.location.href = "/inserirToken";
+  } else {
+    alert(data.erro);
   }
-
-  const codigo = gerarCodigo();
-
-  // salvar temporariamente (simples pra projeto local)
-  localStorage.setItem("reset_email", email);
-  localStorage.setItem("reset_codigo", codigo);
-
-  alert("Código enviado: " + codigo);
-
-  // redireciona pra próxima tela
-  window.location.href = "/inserirToken";
 }

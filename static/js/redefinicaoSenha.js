@@ -31,8 +31,7 @@ function validarSenha() {
   } else if (forca === 5) {
     barra.style.width = "100%";
     barra.style.background = "#2ecc71";
-  }
-  else {
+  } else {
     barra.style.width = "0%";
   }
 }
@@ -63,17 +62,62 @@ function validarConfirmacao() {
     erro.style.display = "block";
   }
 }
-function toggleSenha(el){
 
+function toggleSenha(el) {
   const box = el.closest(".password-box");
   const input = box.querySelector("input");
 
-  if(input.type === "password"){
+  if (input.type === "password") {
     input.type = "text";
     el.classList.remove("show"); // visível = sem risco
-  }else{
+  } else {
     input.type = "password";
     el.classList.add("show"); // oculto = olho riscado
   }
+}
 
+async function redefinirSenhaFinal() {
+  const senha = document.getElementById("novaSenha").value;
+  const confirmar = document.getElementById("confirmarSenha").value;
+
+  // 🔥 BLOQUEIA AQUI
+  if (!senhaValida()) {
+    alert("Senha não atende aos requisitos!");
+    return;
+  }
+
+  if (senha !== confirmar) {
+    alert("As senhas não coincidem!");
+    return;
+  }
+
+  const email = sessionStorage.getItem("email");
+  const token = sessionStorage.getItem("token");
+
+  const response = await fetch("/resetar-senha", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, token, senha }),
+  });
+
+  const data = await response.json();
+
+  if (response.ok) {
+    alert("Senha redefinida!");
+    window.location.href = "/";
+  } else {
+    alert(data.erro);
+  }
+}
+
+function senhaValida() {
+  const senha = document.getElementById("novaSenha").value;
+
+  const tamanho = senha.length >= 8 && senha.length <= 12;
+  const letra = /[a-z]/.test(senha);
+  const letraMai = /[A-Z]/.test(senha);
+  const numero = /[0-9]/.test(senha);
+  const especial = /[@#$]/.test(senha);
+
+  return tamanho && letra && letraMai && numero && especial;
 }

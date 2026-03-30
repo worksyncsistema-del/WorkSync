@@ -8,6 +8,10 @@ from flask import request
 from flask import request, render_template
 import psycopg2.extras
 from flask import request, jsonify
+from db import buscar_usuario_por_email, salvar_token
+import secrets
+from werkzeug.security import generate_password_hash
+from db import buscar_usuario_por_email, atualizar_senha, limpar_token
 
 app = Flask(__name__)
 
@@ -72,7 +76,6 @@ def cadastro_foto_nf():
     return render_template("cadastroFotoNF.html")
 
 @views_bp.route("/redefinicaoSenha")
-@login_required
 def redefinicao_senha():
     return render_template("redefinicaoSenha.html")
 
@@ -227,6 +230,81 @@ def atualizar_usuario():
 @views_bp.route("/inserirToken")
 def inserir_token():
     return render_template("inserirToken.html")
+
+
+@views_bp.route('/enviar-token', methods=['POST'])
+def enviar_token():
+    data = request.get_json()
+    email = data['email']
+
+    user = buscar_usuario_por_email(email)
+
+    if not user:
+        return jsonify({'erro': 'Email não encontrado'}), 404
+
+    token = secrets.token_hex(3)
+
+    salvar_token(user['id'], token)
+
+    print("TOKEN GERADO:", token)
+
+    return jsonify({'ok': True}), 200
+
+
+@views_bp.route('/validar-token', methods=['POST'])
+def validar_token():
+    data = request.get_json()
+
+    email = data['email']
+    token = data['token']
+
+    user = buscar_usuario_por_email(email)
+
+    if not user:
+        return {'erro': 'Usuário não encontrado'}, 404
+
+    if user['token_reset'] != token:
+        return {'erro': 'Token inválido'}, 400
+
+    return {'ok': True}, 200
+
+
+# =========================
+# ALTERAÇÃO DE SENHA
+# =========================
+
+@views_bp.route('/resetar-senha', methods=['POST'])
+def resetar_senha():
+    from flask import request, jsonify
+    from werkzeug.security import generate_password_hash
+    from db import buscar_usuario_por_email, atualizar_senha, limpar_token
+
+    data = request.get_json()
+
+    email = data.get('email')
+    token = data.get('token')
+    senha = data.get('senha')
+
+    # 🔍 valida usuário
+    user = buscar_usuario_por_email(email)
+
+    if not user:
+        return jsonify({'erro': 'Usuário não encontrado'}), 404
+
+    # 🔐 valida token
+    if user['token_reset'] != token:
+        return jsonify({'erro': 'Token inválido'}), 400
+
+    # 🔒 cria hash da senha
+    senha_hash = generate_password_hash(senha)
+
+    # 💾 salva no banco
+    atualizar_senha(user['id'], senha_hash)
+
+    # 🧹 limpa token
+    limpar_token(user['id'])
+
+    return jsonify({'ok': True}), 200
 
 # =========================
 # HORA DO SERVIDOR

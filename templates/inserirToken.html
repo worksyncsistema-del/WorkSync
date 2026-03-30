@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorkSync | Recuperar Senha </title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/recuperacaoSenha.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/inserirToken.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
@@ -24,10 +24,10 @@
         <div class="login-body">
             <h3> Verificação em duas etapas </h3>
             <label> Digite o código de 6 digitos <br> enviado para seu e-mail.</label>
-            <input type="text" id="email" placeholder="Token" maxlength="6">
+            <input type="text" id="token" placeholder="Token" maxlength="6">
         </div>
         <div class="login-body">
-            <button onclick="enviarCodigo()">Enviar código</button>
+            <button onclick="validarToken()">Continuar</button>
             <a class="senha" href="/recuperacaoSenha">Voltar</a>
             <br>
         </div>
@@ -38,6 +38,29 @@
     <footer>
         Copyright WorkSync © 2026
     </footer>
+
+    <script>async function validarToken() {
+            const email = sessionStorage.getItem("email");
+            const token = document.getElementById("token").value;
+
+            const response = await fetch('/validar-token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, token })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // salva o token pra próxima tela
+                sessionStorage.setItem("token", token);
+
+                // vai pra tela de nova senha
+                window.location.href = "/redefinicaoSenha";
+            } else {
+                alert(data.erro);
+            }
+        }</script>
 
 </body>
 
