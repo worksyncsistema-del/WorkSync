@@ -67,9 +67,7 @@ function verificarCPF() {
 
 // acessa o sistema
 function login(event) {
-  console.log("LOGIN FOI CHAMADO");
-
-  if (event) event.preventDefault(); // 🔥 ESSENCIAL
+  if (event) event.preventDefault();
 
   const campoCPF = document.getElementById("cpf");
   const campoSenha = document.getElementById("senha");
@@ -96,10 +94,8 @@ function login(event) {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log("RESPOSTA:", data);
 
       if (data.ok) {
-        console.log("REDIRECIONANDO...");
         sessionStorage.setItem("usuarioNome", data.nome); // 🔥 FALTAVA ISSO
         window.location.href = "/menu";
       } else {
@@ -107,7 +103,6 @@ function login(event) {
       }
     })
     .catch((error) => {
-      console.error("Erro:", error);
       alert("Erro ao conectar com o servidor.");
     });
 }
@@ -155,8 +150,6 @@ function gerarCodigo() {
 async function enviarCodigo() {
   const email = document.getElementById("email").value;
 
-  console.log("EMAIL:", email); // 👈 coloca isso pra testar
-
   const response = await fetch("/enviar-token", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -166,10 +159,7 @@ async function enviarCodigo() {
   const data = await response.json();
 
   if (response.ok) {
-    // 🔥 ESSA LINHA É OBRIGATÓRIA
     sessionStorage.setItem("email", email);
-
-    console.log("SALVO:", sessionStorage.getItem("email"));
 
     window.location.href = "/inserirToken";
   } else {
