@@ -1,96 +1,110 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WorkSync — Configurações</title>
-  <link rel="stylesheet" href="static/css/configuracoes.css">
-    <link rel="stylesheet" href="static/css/dark-mode.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurações</title>
+
+  <!-- Fonte Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS Global -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/worksync-global.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}">
+  <!-- CSS Específico -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/configuracoes.css') }}">
 </head>
+
 <body>
 
-  <header></header>
+<div class="configuracoes-page">
 
-  <main>
-    <div class="card">
-      <div class="form-group">
-        <label>Fuso horário</label>
-        <select>
-          <option selected>America/Sao_Paulo (GMT-3)</option>
-          <option>America/Manaus (GMT-4)</option>
-          <option>America/Belem (GMT-3)</option>
-          <option>America/Fortaleza (GMT-3)</option>
-        </select>
+  <!-- CARD: PREFERÊNCIAS (TEMA + NOTIFICAÇÕES) -->
+  <div class="card">
+    <h3>Preferências</h3>
+
+    <div class="setting-item">
+      <div class="setting-label">
+        <h4>Tema</h4>
+        <p>Escolha entre tema claro ou escuro</p>
       </div>
-
-      <div class="actions" style="margin-top:20px;">
-        <button class="btn-secondary">Cancelar</button>
-        <button class="btn-primary">Salvar alterações</button>
+      <div class="radio-group">
+        <div class="radio-option">
+          <input type="radio" id="tema-light" name="tema" value="light" checked>
+          <label for="tema-light">Claro</label>
+        </div>
+        <div class="radio-option">
+          <input type="radio" id="tema-dark" name="tema" value="dark">
+          <label for="tema-dark">Escuro</label>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Notificações</div>
-
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <span>Alertas de atraso</span>
-          <small>Notificação automática ao registrar entrada com atraso</small>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" checked />
-          <span class="toggle-slider"></span>
-        </label>
+    <div class="setting-item">
+      <div class="setting-label">
+        <h4>Alertas de atraso</h4>
+        <p>Notificação automática ao registrar entrada com atraso</p>
       </div>
-
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <span>Lembrete de registro de ponto</span>
-          <small>Aviso próximo ao horário de entrada, intervalo e saída</small>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <span>Notificações do gestor</span>
-          <small>Receba mensagens e aprovações enviadas pelo seu gestor</small>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" checked />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" checked>
+        <span class="toggle-track"></span>
+      </label>
     </div>
 
-    <div class="card">
-      <div class="card-title">Aparência</div>
-
-      <div class="form-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px,1fr));">
-        <div class="form-group">
-          <label>Tema</label>
-
-          <div class="radio-group" style="margin-top:2px; display:flex; flex-direction:column; gap:8px;">
-            <label class="radio-option">
-              <input type="radio" name="tema" value="light" checked /> Claro
-            </label>
-
-            <label class="radio-option">
-              <input type="radio" name="tema" value="dark" /> Escuro
-            </label>
-          </div>
-        </div>
+    <div class="setting-item">
+      <div class="setting-label">
+        <h4>Lembrete de ponto</h4>
+        <p>Aviso próximo ao horário de entrada, intervalo e saída</p>
       </div>
-
-      <div class="actions" style="margin-top:20px;">
-        <button id="restaurar-tema" class="btn-secondary">Restaurar padrão</button>
-        <button id="aplicar-tema" class="btn-primary">Aplicar</button>      </div>
+      <label class="toggle-switch">
+        <input type="checkbox">
+        <span class="toggle-track"></span>
+      </label>
     </div>
-  </main>
 
-  <script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
+    <div class="setting-item">
+      <div class="setting-label">
+        <h4>Notificações do gestor</h4>
+        <p>Receba mensagens e aprovações do seu gestor</p>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" checked>
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- CARD: SEGURANÇA -->
+  <div class="card danger-card">
+    <h3>Segurança</h3>
+
+    <div class="setting-item">
+      <div class="setting-label">
+        <h4>Redefinir senha</h4>
+        <p>Altere sua senha de acesso ao sistema</p>
+      </div>
+      <button class="btn btn-secondary">Redefinir</button>
+    </div>
+
+    <div class="setting-item">
+      <div class="setting-label">
+        <h4>Fazer logout</h4>
+        <p>Sair de sua conta e voltar à tela de login</p>
+      </div>
+      <button class="btn btn-secondary">Logout</button>
+    </div>
+  </div>
+
+  <!-- FOOTER: BOTÃO SALVAR -->
+  <div class="footer-actions">
+    <button class="btn btn-secondary">Cancelar</button>
+    <button class="btn btn-primary">Salvar</button>
+  </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
 </body>
 </html>

@@ -1,269 +1,147 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Consulta de Cadastros</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciar Usuários — WorkSync</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <!-- Fonte Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        body {
-            font-family: "Segoe UI", Arial, sans-serif;
-            background: #e9edf2;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: auto;
-            background: #f4f6f8;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .top-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .search-input {
-            flex: 1;
-            min-width: 250px;
-            padding: 12px;
-            border-radius: 6px;
-            border: none;
-            background: #1f5f85;
-            color: white;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .search-input::placeholder {
-            color: #cfe3f1;
-        }
-
-        .btn {
-            background: #1f5f85;
-            border: none;
-            color: white;
-            padding: 12px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn:hover {
-            background: #174a68;
-        }
-
-        select {
-            background: #1f5f85;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            outline: none;
-            min-width: 160px;
-        }
-
-        select:hover {
-            background: #174a68;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        thead {
-            background: #d6d9dd;
-        }
-
-        th {
-            padding: 14px;
-            font-weight: 600;
-            color: #333;
-            text-align: left;
-            border-bottom: 1px solid #c5c8cc;
-        }
-
-        td {
-            padding: 14px;
-            border-bottom: 1px solid #e0e3e7;
-            color: #333;
-        }
-
-        tr:hover {
-            background: #f2f5f8;
-        }
-
-        .col-nome {
-            width: 45%;
-        }
-
-        .col-cpf {
-            width: 20%;
-            text-align: center;
-        }
-
-        .col-status {
-            width: 15%;
-            text-align: center;
-        }
-
-        .col-perfil {
-            width: 20%;
-            text-align: center;
-        }
-
-        .col-status {
-            text-transform: capitalize;
-            font-weight: 500;
-        }
-
-        .btn-perfil {
-            display: inline-block;
-            padding: 6px 12px;
-            background: #2d2d2d;
-            color: white;
-            text-decoration: none;
-            font-size: 12px;
-            border-radius: 6px;
-            transition: 0.2s;
-        }
-
-        .btn-perfil:hover {
-            background: #444;
-        }
-
-        @media (max-width: 768px) {
-            .top-bar {
-                flex-direction: column;
-            }
-
-            select,
-            .btn,
-            .search-input {
-                width: 100%;
-            }
-        }
-    </style>
+  <!-- CSS Global (SEMPRE PRIMEIRO) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/worksync-global.css') }}">
+  <!-- CSS Específico -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/gerenciarUsuario.css') }}">
 </head>
 
 <body>
 
-    <div class="container">
+  <div class="gerenciar-usuarios">
 
-        <div class="top-bar">
-            <input type="text" id="search" class="search-input" placeholder="Digite o nome ou CPF">
+    <!-- Card principal -->
+    <div class="card">
 
-            <button class="btn" onclick="filtrar()">🔍</button>
+      <!-- Barra de filtros -->
+      <div class="top-bar">
+        <input
+          type="text"
+          id="search"
+          class="search-input"
+          placeholder="Digite o nome ou CPF"
+        />
 
-            <select id="statusFilter" onchange="filtrar()">
-                <option value="todos">Ativos ou inativos</option>
-                <option value="ativo">Ativos</option>
-                <option value="inativo">Inativos</option>
-            </select>
+        <button class="btn-search" onclick="filtrar()" type="button" title="Pesquisar">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
 
-            <select id="orderFilter" onchange="filtrar()">
-                <option value="nome">Nome</option>
-                <option value="cpf">CPF</option>
-            </select>
-        </div>
+        <select id="statusFilter" onchange="filtrar()">
+          <option value="todos">Todos os Status</option>
+          <option value="ativo">Ativos</option>
+          <option value="inativo">Inativos</option>
+        </select>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>CPF</th>
-                    <th>Status</th>
-                    <th>Perfil</th>
-                </tr>
-            </thead>
-            <tbody id="tabela"></tbody>
-        </table>
+        <select id="orderFilter" onchange="filtrar()">
+          <option value="nome">Ordenar por Nome</option>
+          <option value="cpf">Ordenar por CPF</option>
+        </select>
+      </div>
 
-    </div>
+      <!-- Tabela de usuários -->
+      <table class="table">
+        <thead>
+          <tr>
+    <th class="col-nome">Nome</th>
+    <th class="col-cpf">CPF</th>
+    <th class="col-status">Status</th>
+    <th class="col-perfil">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabela"></tbody>
+      </table>
 
-    <script>
-        let dados = [];
+    </div><!-- /.card -->
 
-        async function carregarUsuarios() {
-                try {
-                    const res = await fetch("/listarUsuarios");
-                    dados = await res.json();
+  </div><!-- /.gerenciar-usuarios -->
 
-                    render(dados);
-                } catch (err) {
-                    console.error("Erro ao carregar usuários:", err);
-                }
-            }
+  <script>
+    let dados = [];
 
-        function render(lista) {
-            const tabela = document.getElementById("tabela");
-            tabela.innerHTML = "";
+    async function carregarUsuarios() {
+      try {
+        const res = await fetch("/listarUsuarios");
+        dados = await res.json();
+        render(dados);
+      } catch (err) {
+        console.error("Erro ao carregar usuários:", err);
+      }
+    }
 
-            lista.forEach(item => {
-                tabela.innerHTML += `
-            <tr>
-                <td class="col-nome">${item.nome}</td>
-                <td class="col-cpf">${item.cpf}</td>
-                <td class="col-status">${item.status}</td>
-                <td class="col-perfil">
-                    <a href="/editarUsuario?id=${item.id}" class="btn-perfil">
-                        Perfil
-                    </a>
-                    <a href="/editarHorarios?id=${item.id}" class="btn-perfil">
-                        Horários
-                    </a>
-                </td>
-            </tr>
+    function render(lista) {
+      const tabela = document.getElementById("tabela");
+      tabela.innerHTML = "";
+
+      if (lista.length === 0) {
+        tabela.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align:center; color: var(--color-text-light); padding: 30px 14px;">
+              Nenhum usuário encontrado.
+            </td>
+          </tr>
         `;
-            });
-        }
+        return;
+      }
 
-        function filtrar() {
-            let lista = [...dados];
+lista.forEach(item => {
+  tabela.innerHTML += `
+    <tr>
+      <td class="col-nome">${item.nome}</td>
+      <td class="col-cpf">${item.cpf}</td>
+      <td class="col-status">${item.status}</td>
+      <td class="col-perfil">
+        <a href="/editarUsuario?id=${item.id}" class="btn-acao">Perfil</a>
+        <a href="/editarHorarios?id=${item.id}" class="btn-acao">Horários</a>
+      </td>
+    </tr>
+  `;
+});
+    }
 
-            const texto = document.getElementById("search").value.toLowerCase();
-            const status = document.getElementById("statusFilter").value;
-            const ordem = document.getElementById("orderFilter").value;
+    function filtrar() {
+      let lista = [...dados];
 
-            if (texto) {
-                lista = lista.filter(item =>
-                    item.nome.toLowerCase().includes(texto) ||
-                    item.cpf.includes(texto)
-                );
-            }
+      const texto  = document.getElementById("search").value.toLowerCase();
+      const status = document.getElementById("statusFilter").value;
+      const ordem  = document.getElementById("orderFilter").value;
 
-            if (status !== "todos") {
-                lista = lista.filter(item => item.status === status);
-            }
+      if (texto) {
+        lista = lista.filter(item =>
+          item.nome.toLowerCase().includes(texto) ||
+          item.cpf.includes(texto)
+        );
+      }
 
-            if (ordem === "nome") {
-                lista.sort((a, b) => a.nome.localeCompare(b.nome));
-            } else {
-                lista.sort((a, b) => a.cpf.localeCompare(b.cpf));
-            }
+      if (status !== "todos") {
+        lista = lista.filter(item => item.status === status);
+      }
 
-            render(lista);
-        }
+      if (ordem === "nome") {
+        lista.sort((a, b) => a.nome.localeCompare(b.nome));
+      } else {
+        lista.sort((a, b) => a.cpf.localeCompare(b.cpf));
+      }
 
-        // inicial
-        carregarUsuarios();
-    </script>
+      render(lista);
+    }
+
+    // Carrega ao iniciar
+    carregarUsuarios();
+  </script>
 
 </body>
 

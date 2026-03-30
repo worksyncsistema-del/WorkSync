@@ -3,25 +3,27 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WorkSync</title>
 
-  <!-- CSS -->
+  <!-- CSS Global (SEMPRE PRIMEIRO) -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/worksync-global.css') }}">
+  <!-- CSS Específico -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}">
 
   <!-- Fonte -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
-rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-  <!-- TOPO -->
+  <!-- TOPBAR -->
   <header class="topbar">
     <span class="logo">
-      <span>WORK</span>SYNC
+      <span>WORK</span><span>SYNC</span>
     </span>
 
     <div id="status"></div>
@@ -32,10 +34,10 @@ rel="stylesheet">
     </div>
   </header>
 
-  <!-- LAYOUT -->
+  <!-- LAYOUT PRINCIPAL -->
   <div class="layout">
 
-    <!-- MENU -->
+    <!-- SIDEBAR (Menu Lateral) -->
     <aside class="sidebar">
       <ul>
         <li><a href="/controleponto" target="conteudo">Controle de Pontos</a></li>
@@ -53,14 +55,14 @@ rel="stylesheet">
       </ul>
     </aside>
 
-    <!-- CONTEÚDO -->
+    <!-- CONTEÚDO PRINCIPAL -->
     <main class="content">
       <iframe src="/controleponto" name="conteudo" class="iframe-content"></iframe>
     </main>
 
   </div>
 
-  <!-- JS -->
+  <!-- SCRIPTS -->
   <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
   <script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
 
