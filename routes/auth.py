@@ -71,7 +71,7 @@ def logout():
 
 @auth_bp.route("/login-page")
 def login_page():
-    if "usuario" in session:
+    if "user_id" in session:
         return redirect("/menu")
     return render_template("login.html")
 

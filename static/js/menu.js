@@ -79,3 +79,11 @@ function aplicarTemaGlobal() {
 }
 
 aplicarTemaGlobal();
+
+function logout(event) {
+  event.preventDefault(); // 🔥 impede o "#"
+
+  sessionStorage.clear();
+
+  window.location.href = "/logout";
+}
