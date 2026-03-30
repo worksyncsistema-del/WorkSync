@@ -219,6 +219,15 @@ def atualizar_usuario():
         print("ERRO:", e)
         return jsonify({"status": "erro"})
 
+
+# =========================
+# RECUPERAÇÃO DE SENHA
+# =========================
+
+@views_bp.route("/inserirToken")
+def inserir_token():
+    return render_template("inserirToken.html")
+
 # =========================
 # HORA DO SERVIDOR
 # =========================

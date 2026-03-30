@@ -177,5 +177,5 @@ function enviarCodigo() {
   alert("Código enviado: " + codigo);
 
   // redireciona pra próxima tela
-  window.location.href = "codigo.html";
+  window.location.href = "/inserirToken";
 }
