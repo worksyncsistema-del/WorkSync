@@ -94,20 +94,20 @@
 
 .radio-option {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 8px;
   cursor: pointer;
 }
 
 .radio-option input[type="radio"] {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
   cursor: pointer;
   accent-color: #0f5c8c;
 }
 
 .radio-option label {
-  font-size: 15px;
+  font-size: 18px;
   color: #222;
   font-weight: 500;
   cursor: pointer;
@@ -182,11 +182,8 @@ input:checked + .toggle-track::before {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 20px; /* menor espaço */
-  border-top: none;
-  margin-bottom: 40px;
+  margin: 24px 0;
 }
-
 /* ─── RESPONSIVIDADE ───────────────────────────────────────────── */
 @media (max-width: 768px) {
   .configuracoes-page {
@@ -284,4 +281,10 @@ body.dark-mode .danger-card h3 {
 
 body.dark-mode .footer-actions {
   border-top-color: #2f2f2f;
+}
+
+.danger-card {
+  --color-primary: var(--color-danger);
+  --color-primary-light: #f87171;
+  --color-primary-dark: #b91c1c;
 }

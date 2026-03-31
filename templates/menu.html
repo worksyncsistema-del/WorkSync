@@ -42,19 +42,14 @@
       <ul>
         <li><a href="/controleponto" target="conteudo">Controle de Pontos</a></li>
         <li><a href="/perfil" target="conteudo">Meu perfil</a></li>
-        <li><a href="/cadastroUsuario" target="conteudo">Cadastro</a></li>
         <li><a href="/reconhecimentoFacial" target="conteudo">Reg. ponto</a></li>
-        <li><a href="/cadastrarFoto" target="conteudo">Cad. foto</a></li>
-      {% if tipo == 'admin' %}
-      <li>
-        <a href="/gerenciarUsuario" id="gerenciamento" target="conteudo">
-          Gerenciamento
-        </a>
-      </li>
-      {% endif %}
         <li><a href="/configuracoes" target="conteudo">Configurações</a></li>
-
+      {% if tipo == 'admin' %}
         <li class="divider"></li>
+        <li><a href="/gerenciarUsuario" id="gerenciamento" target="conteudo">Gerenciamento</a></li>
+        <li><a href="/cadastroUsuario" target="conteudo">Cadastro</a></li>
+        <li><a href="/cadastrarFoto" target="conteudo">Cad. foto</a></li>
+      {% endif %}
       </ul>
     </aside>
 

@@ -28,7 +28,7 @@
 /* ─── JORNADA ───────────────────────────────────────── */
 .jornada-linha {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-evenly;
   gap: 0;
 }
@@ -245,7 +245,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--muted-text);
   text-transform: uppercase;
@@ -256,7 +256,7 @@
 }
 
 .jornada-hora {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--text-color);
 }
