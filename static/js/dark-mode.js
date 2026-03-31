@@ -1,53 +1,22 @@
-// ===== APLICAR TEMA AO CARREGAR =====
-(function () {
-  const tema = localStorage.getItem("tema") || "light";
+function aplicarTema(tema) {
+  const escuro = tema === "dark";
 
-  if (tema === "dark") {
-    document.body.classList.add("dark-mode");
-  } else {
-    document.body.classList.remove("dark-mode");
-  }
+  document.body.classList.toggle("dark-mode", escuro);
+  document.documentElement.classList.toggle("dark-mode", escuro);
 
-  // marca radio correto (se existir)
-  const radio = document.querySelector(`input[name="tema"][value="${tema}"]`);
-  if (radio) {
-    radio.checked = true;
-  }
-})();
-
-
-// ===== BOTÃO APLICAR =====
-const btnAplicar = document.getElementById("aplicar-tema");
-
-if (btnAplicar) {
-  btnAplicar.addEventListener("click", () => {
-    const selecionado = document.querySelector('input[name="tema"]:checked');
-
-    if (!selecionado) return;
-
-    const tema = selecionado.value;
-
-    // salva
-    localStorage.setItem("tema", tema);
-
-    // aplica na página atual
-    document.body.classList.toggle("dark-mode", tema === "dark");
-
-    // aplica no menu (caso esteja em iframe)
-    if (window.parent !== window) {
-      window.parent.document.body.classList.toggle("dark-mode", tema === "dark");
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.document.body.classList.toggle("dark-mode", escuro);
+      window.parent.document.documentElement.classList.toggle("dark-mode", escuro);
     }
-
-    // aplica no iframe (se existir)
-    const iframe = window.parent.document.querySelector("iframe");
-
-    if (iframe && iframe.contentWindow) {
-      iframe.contentWindow.document.body.classList.toggle(
-        "dark-mode",
-        tema === "dark"
-      );
-    }
-
-    console.log("Tema aplicado:", tema);
-  });
+  } catch (erro) {
+    console.log("Não foi possível aplicar o tema na janela.");
+  }
 }
+
+window.aplicarTema = aplicarTema;
+
+document.addEventListener("DOMContentLoaded", function () {
+  const temaSalvo = localStorage.getItem("tema") || "light";
+  aplicarTema(temaSalvo);
+});

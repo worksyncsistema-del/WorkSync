@@ -1,69 +1,125 @@
-/* Variáveis CSS para cores */
 :root {
-    --background-light: #f2f2f2;
-    --text-light: #000000;
-    --sidebar-bg-light: #ffffff;
-    --topbar-bg-light: #0F5C8C;
-    --topbar-text-light: #ffffff;
-    --link-light: #000000;
-    --link-hover-light: #cccccc;
-    --active-bg-light: #e0e0e0;
-    --active-border-light: #0C4A70;
+    --background-color: #f2f2f2;
+    --text-color: #000000;
+    --card-bg: #ffffff;
+    --card-border: #d9d9d9;
+    --sidebar-bg: #ffffff;
+    --topbar-text: #ffffff;
+    --link-color: #000000;
+    --link-hover: #cccccc;
+    --active-bg: #e0e0e0;
+    --active-border: #0C4A70;
+    --muted-text: #666666;
+
+    /* variáveis usadas no menu.css */
+    --color-white: #ffffff;
+    --color-text-dark: #000000;
+    --color-bg-light: #f2f2f2;
+    --color-border: #d9d9d9;
+    --color-primary: #0f5c8c;
+    --color-primary-dark: #0a3d5c;
 }
 
-/* Estilos para o modo escuro */
-body.dark-mode {
-    --background-color: #1a1a1a;
-    --text-color: #e0e0e0;
-    --sidebar-bg: #2c2c2c;
-    --topbar-bg: #0a3d5c;
-    --topbar-text: #e0e0e0;
-    --link-color: #e0e0e0;
-    --link-hover: #555555;
-    --active-bg: #3a3a3a;
-    --active-border: #082e42;
+body.dark-mode,
+html.dark-mode {
+    --background-color: #121212;
+    --text-color: #f1f1f1;
+    --card-bg: #1e1e1e;
+    --card-border: #2f2f2f;
+    --sidebar-bg: #232323;
+    --topbar-text: #f1f1f1;
+    --link-color: #f1f1f1;
+    --link-hover: #333333;
+    --active-bg: #2d2d2d;
+    --active-border: #0F5C8C;
+    --muted-text: #b3b3b3;
 
+    /* variáveis usadas no menu.css */
+    --color-white: #1e1e1e;
+    --color-text-dark: #f1f1f1;
+    --color-bg-light: #121212;
+    --color-border: #2f2f2f;
+    --color-primary: #0f5c8c;
+    --color-primary-dark: #0a3d5c;
+}
+
+/* fundo geral */
+body {
     background-color: var(--background-color);
     color: var(--text-color);
 }
 
-body.dark-mode .topbar {
-    background: var(--topbar-bg);
-    color: var(--topbar-text);
+/* cards */
+.card {
+    background: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--card-border);
 }
 
-body.dark-mode .topbar .logo {
-    color: var(--topbar-text);
+/* textos internos */
+.card h3,
+.card h4,
+.setting-label h4 {
+    color: var(--text-color);
 }
 
-body.dark-mode .topbar .logo spam {
-    color: var(--topbar-text);
+.card p,
+.setting-label p {
+    color: var(--muted-text);
 }
 
-body.dark-mode #relogio,
-body.dark-mode #nomeUsuario,
-body.dark-mode #status {
-    color: var(--topbar-text);
+/* linhas divisórias */
+.setting-item {
+    border-bottom: 1px solid var(--card-border);
 }
 
-body.dark-mode .sidebar {
+/* menu lateral */
+.sidebar {
     background: var(--sidebar-bg);
 }
 
-body.dark-mode .sidebar a {
+.sidebar a {
     color: var(--link-color);
 }
 
-body.dark-mode .sidebar li:hover {
+.sidebar a:hover {
     background: var(--link-hover);
 }
 
-body.dark-mode .sidebar .active {
+.sidebar .active a {
     background: var(--active-bg);
-    border-left-color: var(--active-border);
+    border-left: 4px solid var(--active-border);
 }
 
-body.dark-mode .content {
-    background: var(--background-color);
+/* topbar */
+.topbar {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: var(--topbar-text);
 }
 
+.topbar .logo,
+.topbar .logo span,
+#relogio,
+#nomeUsuario,
+#status {
+    color: var(--topbar-text);
+}
+
+/* card de segurança */
+.danger-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+}
+
+/* botões */
+body.dark-mode .btn-secondary {
+    background: transparent;
+    color: #f1f1f1;
+    border: 1px solid #666;
+}
+
+body.dark-mode .btn-primary {
+    background: #0F5C8C;
+    color: white;
+    border: none;
+}

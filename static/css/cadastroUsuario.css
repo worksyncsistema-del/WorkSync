@@ -221,3 +221,41 @@ hr {
     min-width: auto;
   }
 }
+
+/* ─── DARK MODE: CADASTRO USUÁRIO ───────────────────────── */
+
+body.dark-mode .perfil-page {
+  background: var(--background-color);
+  color: var(--text-color);
+}
+
+/* foto */
+body.dark-mode .foto {
+  background: var(--card-bg);
+  color: var(--muted-text);
+  border-color: var(--card-border);
+}
+
+/* textos */
+body.dark-mode .dia-manual h4 {
+  color: var(--text-color);
+}
+
+/* bordas */
+body.dark-mode .dia-manual {
+  border-top-color: var(--card-border);
+}
+
+body.dark-mode hr {
+  border-top-color: var(--card-border);
+}
+
+/* botões */
+body.dark-mode .btn-cad {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+body.dark-mode .btn-cad:hover {
+  background: var(--color-primary-dark);
+}
