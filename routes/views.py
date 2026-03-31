@@ -113,8 +113,25 @@ def controle_ponto():
     return render_template("controleponto.html")
 
 @views_bp.route("/perfil")
+@login_required
 def perfil():
-    return render_template("perfil.html")
+    conn = conectar_bd()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    cursor.execute("""
+        SELECT 
+            u.nome, u.cpf, u.email, u.telefone,
+            f.cargo, f.setor, f.tipo_perfil,
+            f.data_admissao, f.tipo_contrato
+        FROM usuarios u
+        JOIN funcionarios f ON u.id = f.usuario_id
+        WHERE u.id = %s
+    """, (session['user_id'],))
+
+    user = cursor.fetchone()
+    conn.close()
+
+    return render_template("perfil.html", user=user)
 
 @views_bp.route("/cadastroUsuario")
 def cadastro_usuario():

@@ -220,3 +220,7 @@ hr {
     min-width: auto;
   }
 }
+
+input[readonly] {
+  cursor: default;
+}
