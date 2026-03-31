@@ -26,7 +26,7 @@
       <span>WORK</span><span>SYNC</span>
     </span>
 
-    <div id="status"></div>
+    <div id="status">{{ nome }}</div>
 
     <div id="relogio">
       <div id="hora"></div>
@@ -47,7 +47,13 @@
         <li><a href="/cadastrarFoto" target="conteudo">Cad. foto</a></li>
         <li><a href="/cadastroFotoNF" target="conteudo">Cad. foto (NF)</a></li>
         <li><a href="/redefinicaoSenha" target="conteudo">Redefinir senha</a></li>
-        <li><a href="/gerenciarUsuario" id="gerenciamento" target="conteudo">Gerenciamento</a></li>
+      {% if tipo == 'admin' %}
+      <li>
+        <a href="/gerenciarUsuario" id="gerenciamento" target="conteudo">
+          Gerenciamento
+        </a>
+      </li>
+      {% endif %}
         <li><a href="/configuracoes" target="conteudo">Configurações</a></li>
 
         <li class="divider"></li>
@@ -62,22 +68,13 @@
 
   </div>
 
+  <script>
+    const usuarioNome = "{{ nome }}";
+  </script>
+
   <!-- SCRIPTS -->
   <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
   <script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
-  <script>
-    const tipo = sessionStorage.getItem("tipo");
-
-      if (tipo !== "admin") {
-        const el = document.getElementById("gerenciamento");
-
-        if (el) {
-          el.innerHTML = "🔒 Gerenciamento";
-          el.style.opacity = "0.5";
-          el.style.pointerEvents = "none";
-        }
-      }
-  </script>
 
 </body>
 

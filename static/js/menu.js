@@ -16,7 +16,7 @@ async function atualizarRelogio() {
     `${dados.dia}, ${dados.data}`;
 }
 
-setInterval(atualizarRelogio, 1000);
+setInterval(atualizarRelogio, 500);
 atualizarRelogio();
 
 async function atualizarStatus() {
@@ -24,7 +24,7 @@ async function atualizarStatus() {
   const dados = await resposta.json();
 
   const statusEl = document.getElementById("status");
-  const nome = sessionStorage.getItem("usuarioNome") || "";
+  const nome = usuarioNome || "";
 
   if (dados.status === "expediente") {
     statusEl.textContent = `🟢 Em expediente — ${nome}`;

@@ -48,6 +48,7 @@ def login():
     WHERE REPLACE(REPLACE(u.cpf, '.', ''), '-', '') = %s
 """, (cpf,))
 
+
     user = cursor.fetchone()
     conn.close()
 
@@ -69,6 +70,7 @@ def login():
         return jsonify({'erro': 'Senha incorreta'}), 401
 
     session['user_id'] = user['id']
+    session['nome'] = user['nome']
     session['tipo'] = user['tipo_perfil']
 
     return jsonify({
@@ -88,6 +90,7 @@ def recuperacao_senha():
 @views_bp.route("/menu")
 @login_required
 def menu():
+    print(session)
     conn = conectar_bd()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
@@ -95,7 +98,11 @@ def menu():
     user = cursor.fetchone()
     conn.close()
 
-    return render_template("menu.html", nome=user['nome'])
+    return render_template(
+    "menu.html",
+    nome=session.get('nome'),
+    tipo=session.get('tipo')
+)
 
 # =========================
 # TELAS DENTRO DO MENU
