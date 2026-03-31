@@ -82,8 +82,18 @@ body {
     color: var(--link-color);
 }
 
+/*Cor da fonte do menu ao relar o mouse*/
 .sidebar a:hover {
-    background: var(--link-hover);
+  background: var(--color-bg-light);
+  color: var(--color-text-dark); 
+  border-left-color: var(--color-primary);
+}
+
+/*cor da fonte do menu ao selecionar*/
+body.dark-mode .sidebar .active a {
+  background: rgba(77, 163, 217, 0.15);
+  color: #FFFFFF;
+  border-left: 4px solid #4da3d9;
 }
 
 .sidebar .active a {
@@ -123,3 +133,4 @@ body.dark-mode .btn-primary {
     color: white;
     border: none;
 }
+

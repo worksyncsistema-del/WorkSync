@@ -182,9 +182,9 @@ input:checked + .toggle-track::before {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 40px;
-  padding-top: 24px;
-  border-top: 1.5px solid #e5e7eb;
+  margin-top: 20px; /* menor espaço */
+  border-top: none;
+  margin-bottom: 40px;
 }
 
 /* ─── RESPONSIVIDADE ───────────────────────────────────────────── */
