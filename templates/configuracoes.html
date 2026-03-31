@@ -85,7 +85,9 @@
         <h4>Redefinir senha</h4>
         <p>Altere sua senha de acesso ao sistema</p>
       </div>
-      <button class="btn btn-secondary">Redefinir</button>
+      <a href="/redefinicaoSenha">
+        <button class="btn btn-secondary">Redefinir</button>
+      </a>
     </div>
 
     <div class="setting-item">
@@ -93,7 +95,9 @@
         <h4>Fazer logout</h4>
         <p>Sair de sua conta e voltar à tela de login</p>
       </div>
-      <button class="btn btn-secondary">Logout</button>
+      <a href="#" onclick="logout(event)">
+        <button class="btn btn-secondary">Sair</button>
+      </a>
     </div>
   </div>
 
@@ -106,5 +110,6 @@
 </div>
 
 <script src="{{ url_for('static', filename='js/dark-mode.js') }}"></script>
+<script src="{{ url_for('static', filename='js/menu.js') }}"></script>
 </body>
 </html>

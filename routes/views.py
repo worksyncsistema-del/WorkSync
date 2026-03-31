@@ -146,11 +146,6 @@ def reconhecimento_facial():
 def cadastrar_foto():
     return render_template("cadastrarFoto.html")
 
-@views_bp.route("/cadastroFotoNF")
-@login_required
-def cadastro_foto_nf():
-    return render_template("cadastroFotoNF.html")
-
 @views_bp.route("/redefinicaoSenha")
 def redefinicao_senha():
     return render_template("redefinicaoSenha.html")

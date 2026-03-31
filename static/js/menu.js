@@ -85,5 +85,5 @@ function logout(event) {
 
   sessionStorage.clear();
 
-  window.location.href = "/logout";
+  window.top.location = "/logout";
 }
