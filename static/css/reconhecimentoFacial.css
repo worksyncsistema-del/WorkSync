@@ -1,76 +1,45 @@
 /* ==================================================
-   Cadastro de Biometria Facial - Página Específica
-   Segue exatamente o layout de reconhecimentoFacial.css
+   Reconhecimento Facial - Página Específica
    ================================================== */
 
 .facial-page {
-  padding: 20px;
+  padding: 30px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
-  box-sizing: border-box;
 }
 
 /* Content Container */
 .facial-content {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+  gap: 24px;
   flex: 1;
-  height: 100%;
-  box-sizing: border-box;
+  justify-content: space-between;
 }
 
-/* Camera Card - Com fundo branco e sombra */
+/* Camera Card */
 .camera-card {
   background: var(--color-white);
-  padding: 20px;
-  border-radius: 12px;
+  padding: 24px;
+  border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  min-height: 0;
-  box-sizing: border-box;
-}
-
-/* Input de Nome */
-.camera-card input[type="text"] {
-  width: 100%;
-  max-width: 500px;
-  margin-bottom: 12px;
-  padding: 12px 16px;
-  border: 1.5px solid var(--color-border);
-  border-radius: 8px;
-  font-size: 16px;
-  background: var(--color-white);
-  font-family: var(--font-family-base);
-  flex-shrink: 0;
-}
-
-.camera-card input[type="text"]:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(15, 92, 140, 0.1);
+    width: 70%;       /* 👈 diminui aqui */
+  margin: 0 auto;   /* 👈 centraliza */
 }
 
 .camera-container {
   position: relative;
   width: 100%;
-  max-width: 1000px;
-  border-radius: 12px;
+  flex: 1;
+  border-radius: 8px;
   overflow: hidden;
   background: #000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  margin-bottom: 12px;
-  flex: 1;
-  min-height: 0;
+  min-height: 300px;
 }
 
 .camera-video {
@@ -154,44 +123,12 @@
   }
 }
 
-/* Contador */
-#contador {
-  text-align: center;
-  font-weight: 500;
-  font-size: 16px;
-  color: var(--color-text-medium);
-  margin-bottom: 8px;
-  flex-shrink: 0;
-}
-
-/* Barra de Progresso */
-.barra {
-  width: 100%;
-  max-width: 600px;
-  height: 12px;
-  background: #ddd;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  flex-shrink: 0;
-}
-
-.barra-preenchimento {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #ef4444, #f59e0b, #f1c40f, #9acd32, #10b981);
-  border-radius: 6px;
-  transition: width 0.4s ease, background 0.4s ease;
-}
-
-/* Button Container - Fora do card */
+/* Button Container */
 .button-container {
   display: flex;
   gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
-  width: 100%;
-  flex-shrink: 0;
 }
 
 .button-container .btn-primary,
@@ -259,7 +196,7 @@
 }
 
 .modal-header h2 {
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-h2);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-dark);
   margin: 0;
@@ -331,18 +268,13 @@
 }
 
 /* Responsive Design */
-@media (max-width: 900px) {
+@media (max-width: 768px) {
   .facial-page {
-    padding: 16px;
-  }
-
-  .camera-card {
     padding: 20px;
   }
 
   .camera-container {
-    max-width: 100%;
-    min-height: 350px;
+    width: 85%;
   }
 
   .camera-frame-guide {
@@ -364,26 +296,19 @@
   .button-container .btn-secondary {
     min-width: 140px;
   }
+
+  .modal-content {
+    width: 95%;
+  }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 480px) {
   .facial-page {
-    padding: 12px;
-  }
-
-  .camera-card {
     padding: 16px;
   }
 
-  .camera-card input[type="text"] {
-    max-width: 100%;
-    margin-bottom: 16px;
-  }
-
   .camera-container {
-    max-width: 100%;
-    min-height: 280px;
-    margin-bottom: 16px;
+    width: 95%;
   }
 
   .camera-frame-guide {
@@ -395,10 +320,6 @@
   .camera-frame-guide::after {
     width: 28px;
     height: 28px;
-  }
-
-  .barra {
-    max-width: 100%;
   }
 
   .button-container {

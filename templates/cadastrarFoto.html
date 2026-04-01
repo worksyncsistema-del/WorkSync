@@ -3,188 +3,132 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Cadastro de Biometria Facial</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Biometria Facial - WorkSync</title>
+
+    <!-- CSS Global (SEMPRE PRIMEIRO) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/worksync-global.css') }}">
+    <!-- CSS Específico -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastroFoto.css') }}">
 
     <!-- Fonte -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/worksync-global.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/cadastroFoto.css') }}">
-
-    <!--Dark-mode-->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}">
-  
 </head>
 
 <body>
 
-    <!-- POPUP -->
-    <div id="popup-instrucoes" class="popup">
-        <div class="popup-conteudo">
-            <h2>Orientações para cadastro facial</h2>
-            <ul>
-                <li>Posicione o rosto de frente para a câmera</li>
-                <li>Mantenha o rosto centralizado</li>
-                <li>Ambiente bem iluminado</li>
-                <li>Evite acessórios no rosto</li>
-                <li>Permaneça imóvel durante a captura</li>
-            </ul>
-            <div class="popup-botao">
-                <button onclick="iniciarCadastro()">Vamos lá!</button>
+<div class="facial-page">
+
+    <!-- Main Content -->
+    <div class="facial-content">
+
+        <!-- Camera Card -->
+        <div class="card camera-card">
+            <!-- Input de Nome -->
+            <input type="text" id="nome" placeholder="Digite o nome">
+
+            <!-- Camera Container -->
+            <div class="camera-container">
+                <video id="video" class="camera-video" autoplay playsinline></video>
+                <div class="camera-placeholder">
+                    <div class="camera-frame-guide"></div>
+                    <p class="camera-status">Câmera desativada</p>
+                </div>
+            </div>
+
+            <!-- Contador -->
+            <p id="contador">Foto 0 de 5</p>
+
+            <!-- Barra de Progresso -->
+            <div class="barra">
+                <div class="barra-preenchimento" id="barra"></div>
+            </div>
+        </div>
+
+        <!-- Buttons (Fora do Card) -->
+        <div class="button-container">
+            <button class="btn-primary" id="btnCapturar" onclick="capturar()">Capturar Foto</button>
+            <button class="btn-secondary" onclick="abrirInstrucoes()">Instruções</button>
+            <button class="btn-secondary" onclick="history.back()">Voltar</button>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Modal de Instruções -->
+<div id="modal-instrucoes" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Instruções para Cadastro</h2>
+            <button class="modal-close" onclick="fecharInstrucoes()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="instructions-list">
+                <div class="instruction-item">
+                    <div class="instruction-number">1</div>
+                    <p>Posicione o rosto de frente para a câmera</p>
+                </div>
+                <div class="instruction-item">
+                    <div class="instruction-number">2</div>
+                    <p>Mantenha o rosto centralizado</p>
+                </div>
+                <div class="instruction-item">
+                    <div class="instruction-number">3</div>
+                    <p>Esteja em um ambiente com iluminação adequada</p>
+                </div>
+                <div class="instruction-item">
+                    <div class="instruction-number">4</div>
+                    <p>Não utilize acessórios que obstruam o rosto (boné, óculos, etc)</p>
+                </div>
+                <div class="instruction-item">
+                    <div class="instruction-number">5</div>
+                    <p>Permaneça imóvel durante a captura</p>
+                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- CONTEÚDO -->
-    <div class="pagina-cadastro">
-        <div class="container-cadastro">
+<script>
+    const video = document.getElementById('video');
+    const modal = document.getElementById('modal-instrucoes');
 
-            <div class="card box-camera">
-                <h2>Cadastro de Biometria Facial</h2>
+    function abrirInstrucoes() {
+        modal.classList.add('active');
+    }
 
-                <!-- NOME -->
-                <input type="text" id="nome" placeholder="Digite o nome" style="margin-bottom: 15px;">
+    function fecharInstrucoes() {
+        modal.classList.remove('active');
+    }
 
-                <!-- CAMERA -->
-                <div class="camera-box">
-                    <video id="video" autoplay></video>
-                    <div class="face-guide"></div>
-                </div>
-
-                <!-- BOTÕES -->
-                <div class="botoes">
-                    <button onclick="capturar()" id="btnCapturar">Capturar Foto</button>
-                </div>
-
-                <!-- CONTADOR -->
-                <p id="contador">Foto 0 de 5</p>
-
-                <!-- BARRA -->
-                <div class="barra">
-                    <div class="barra-preenchimento" id="barra"></div>
-                </div>
-
-            </div>
-
-        </div>
-    </div>
-
-    <script>
-
-        function iniciarCadastro() {
-            fecharPopup()
-            iniciarCamera()
+    // Fechar modal ao clicar fora
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            fecharInstrucoes();
         }
+    }
 
-        function fecharPopup() {
-            document.getElementById("popup-instrucoes").style.display = "none"
-        }
+    // Inicializar câmera ao carregar a página
+    window.addEventListener('load', function() {
+        iniciarCamera();
+    });
 
-        let stream
-        let fotosCapturadas = 0
-        const maxFotos = 5
+    function iniciarCamera() {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                console.log("Câmera iniciada com sucesso");
+            })
+            .catch(err => {
+                console.error("Erro ao acessar câmera:", err);
+            });
+    }
+</script>
 
-        const video = document.getElementById("video")
-        const contador = document.getElementById("contador")
-        const barra = document.getElementById("barra")
-        const btnCapturar = document.getElementById("btnCapturar")
-
-        function iniciarCamera() {
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(s => {
-                    stream = s
-                    video.srcObject = stream
-                })
-                .catch(err => {
-                    alert("Erro ao acessar câmera")
-                })
-        }
-
-        async function capturar() {
-
-            const nome = document.getElementById("nome").value.trim()
-
-            if (!nome) {
-                alert("Digite o nome")
-                return
-            }
-
-            if (fotosCapturadas >= maxFotos) return
-
-            if (btnCapturar.disabled) return
-
-            btnCapturar.disabled = true
-            btnCapturar.innerText = "Processando..."
-
-            try {
-
-                // 📸 CAPTURA
-                const canvas = document.createElement("canvas")
-                canvas.width = video.videoWidth
-                canvas.height = video.videoHeight
-
-                const ctx = canvas.getContext("2d")
-                ctx.drawImage(video, 0, 0)
-
-                const imagem = canvas.toDataURL("image/jpeg")
-
-                // 🔥 ENVIO PRO BACKEND
-                const response = await fetch("/salvar_cadastro", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        nome: nome,
-                        imagem: imagem
-                    })
-                })
-
-                const data = await response.json()
-
-                if (!response.ok) {
-                    throw new Error(data.erro || "Erro ao salvar")
-                }
-
-                // 📊 UI
-                fotosCapturadas++
-                contador.innerText = `Foto ${fotosCapturadas} de 5`
-
-                const progresso = (fotosCapturadas / maxFotos) * 100
-                barra.style.width = progresso + "%"
-
-                const cores = [
-                    "#e74c3c",
-                    "orange",
-                    "#f1c40f",
-                    "#9acd32",
-                    "#2ecc71"
-                ]
-
-                barra.style.background = cores[fotosCapturadas - 1]
-
-                if (fotosCapturadas === maxFotos) {
-                    setTimeout(() => {
-                        alert("Cadastro concluído!")
-                        window.location.href = "/menu"
-                    }, 300)
-                }
-
-            } catch (err) {
-                console.error(err)
-                alert("Erro ao cadastrar")
-            } finally {
-                btnCapturar.disabled = false
-                btnCapturar.innerText = "Capturar Foto"
-            }
-
-        }
-
-    </script>
+<script src="{{ url_for('static', filename='js/cadastrarFoto.js') }}"></script>
 
 </body>
 

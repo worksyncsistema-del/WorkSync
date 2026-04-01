@@ -1,5 +1,5 @@
 :root {
-    --background-color: #f2f2f2;
+    --background-color: #f8f9fa;
     --text-color: #000000;
     --card-bg: #ffffff;
     --card-border: #d9d9d9;
@@ -14,7 +14,7 @@
     /* variáveis usadas no menu.css */
     --color-white: #ffffff;
     --color-text-dark: #000000;
-    --color-bg-light: #f2f2f2;
+    --color-bg-light: #f8f9fa;
     --color-border: #d9d9d9;
     --color-primary: #0f5c8c;
     --color-primary-dark: #0a3d5c;

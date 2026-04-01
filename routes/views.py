@@ -112,6 +112,10 @@ def menu():
 def controle_ponto():
     return render_template("controleponto.html")
 
+@views_bp.route("/inicio")
+def inicio():
+    return render_template("inicio.html")
+
 @views_bp.route("/perfil")
 @login_required
 def perfil():

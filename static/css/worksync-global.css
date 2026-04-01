@@ -18,7 +18,6 @@
   /* Cores Neutras */
   --color-white: #ffffff;
   --color-bg-light: #f8f9fa;
-  --color-bg-lighter: #f0f2f5;
   --color-border: #e5e7eb;
   --color-border-light: #f0f2f5;
   --color-text-dark: #1a1a1a;
@@ -363,7 +362,7 @@ textarea {
   letter-spacing: 0.05em;
   color: var(--color-text-light);
   border-bottom: 2px solid var(--color-border);
-  background: var(--color-bg-lighter);
+  background: var(--color-bg-light);
 }
 
 .table td {
