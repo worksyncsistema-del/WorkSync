@@ -49,9 +49,8 @@
 
         <!-- Buttons (Fora do Card) -->
         <div class="button-container">
-            <button class="btn-primary" id="btnCapturar" onclick="capturar()">Capturar Foto</button>
+            <button class="btn-primary" id="btnCapturar" onclick="cadastrar()">Capturar Foto</button>
             <button class="btn-secondary" onclick="abrirInstrucoes()">Instruções</button>
-            <button class="btn-secondary" onclick="history.back()">Voltar</button>
         </div>
 
     </div>
@@ -91,42 +90,6 @@
         </div>
     </div>
 </div>
-
-<script>
-    const video = document.getElementById('video');
-    const modal = document.getElementById('modal-instrucoes');
-
-    function abrirInstrucoes() {
-        modal.classList.add('active');
-    }
-
-    function fecharInstrucoes() {
-        modal.classList.remove('active');
-    }
-
-    // Fechar modal ao clicar fora
-    window.onclick = function(event) {
-        if (event.target === modal) {
-            fecharInstrucoes();
-        }
-    }
-
-    // Inicializar câmera ao carregar a página
-    window.addEventListener('load', function() {
-        iniciarCamera();
-    });
-
-    function iniciarCamera() {
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                video.srcObject = stream;
-                console.log("Câmera iniciada com sucesso");
-            })
-            .catch(err => {
-                console.error("Erro ao acessar câmera:", err);
-            });
-    }
-</script>
 
 <script src="{{ url_for('static', filename='js/cadastrarFoto.js') }}"></script>
 
