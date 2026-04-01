@@ -103,6 +103,7 @@
 
                 video.srcObject = stream;
                 video.play();
+                document.querySelector(".camera-placeholder").style.display = "none";
 
                 // Aguarda 2 segundos para estabilizar
                 setTimeout(() => {
