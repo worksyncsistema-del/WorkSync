@@ -126,19 +126,21 @@
 }
 
 .sidebar a:hover {
-  background: var(--color-bg-light);
+  background: #f0f2f5;  /* ← Mesmo cinza */
   color: var(--color-primary);
   border-left-color: var(--color-primary);
   padding-left: 26px;
 }
 
+
 .sidebar .active a {
-  background: var(--color-bg-light);
+  background: #f0f2f5; 
   color: var(--color-primary);
   font-weight: var(--font-weight-semibold);
   border-left-color: var(--color-primary);
   padding-left: 26px;
 }
+
 
 /* Divisor no Menu */
 .sidebar .divider {
