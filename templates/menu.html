@@ -26,11 +26,23 @@
       <span>WORK</span><span>SYNC</span>
     </span>
 
-    <div id="status">{{ nome }}</div>
+    <div id="status" class="status-container"></div>
 
-    <div id="relogio">
-      <div id="hora"></div>
-      <div id="data"></div>
+    <div class="topbar-right">
+      <!-- PROFILE LINK -->
+      <a href="/perfil" target="conteudo" class="profile-link">
+        <div class="profile-avatar-topbar" id="profileAvatar">
+          <span id="profileInitials">--</span>
+        </div>
+        <span class="profile-name-topbar" id="profileName">Usuário</span>
+      </a>
+
+      <div class="topbar-separator"></div>
+
+      <div id="relogio">
+        <div id="hora"></div>
+        <div id="data"></div>
+      </div>
     </div>
   </header>
 
@@ -41,9 +53,7 @@
     <aside class="sidebar">
       <ul>
         <li><a href="/controleponto" target="conteudo">Controle de Pontos</a></li>
-        <li><a href="/perfil" target="conteudo">Meu perfil</a></li>
         <li><a href="/reconhecimentoFacial" target="conteudo">Reg. ponto</a></li>
-        <li><a href="/configuracoes" target="conteudo">Configurações</a></li>
       {% if tipo == 'admin' %}
         <li class="divider"></li>
         <li><a href="/gerenciarUsuario" id="gerenciamento" target="conteudo">Gerenciamento</a></li>
@@ -62,6 +72,8 @@
 
   <script>
     const usuarioNome = "{{ nome }}";
+    const usuarioEmail = "{{ email }}";
+    const usuarioFoto = "{{ foto }}";
   </script>
 
   <!-- SCRIPTS -->

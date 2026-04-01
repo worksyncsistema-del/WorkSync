@@ -1,3 +1,8 @@
+/* ============================================================
+   menu.js — Funcionalidades do Menu Principal
+   ============================================================ */
+
+// ─── SIDEBAR NAVIGATION ───
 const links = document.querySelectorAll(".sidebar a");
 
 links.forEach(link => {
@@ -7,53 +12,85 @@ links.forEach(link => {
   });
 });
 
+// ─── RELÓGIO E DATA ───
 async function atualizarRelogio() {
   const resposta = await fetch("/hora-servidor");
   const dados = await resposta.json();
 
   document.getElementById("hora").textContent = dados.hora;
-  document.getElementById("data").textContent =
-    `${dados.dia}, ${dados.data}`;
+  document.getElementById("data").textContent = `${dados.dia}, ${dados.data}`;
 }
 
 setInterval(atualizarRelogio, 500);
 atualizarRelogio();
 
+// ─── STATUS BADGE ───
 async function atualizarStatus() {
   const resposta = await fetch("/status");
   const dados = await resposta.json();
 
   const statusEl = document.getElementById("status");
-  const nome = usuarioNome || "";
+  let statusText = "";
+  let badgeClass = "";
+  let icon = "";
 
   if (dados.status === "expediente") {
-    statusEl.textContent = `🟢 Em expediente — ${nome}`;
-    statusEl.className = "status-expediente";
+    statusText = "Em expediente";
+    badgeClass = "status-badge-expediente";
+    icon = "\u2713"; // ✓
   } else if (dados.status === "intervalo") {
-    statusEl.textContent = `🟡 Em intervalo — ${nome}`;
-    statusEl.className = "status-intervalo";
+    statusText = "Em intervalo";
+    badgeClass = "status-badge-intervalo";
+    icon = "\u23F8"; // ⏸
   } else {
-    statusEl.textContent = `🔴 Fora do expediente — ${nome}`;
-    statusEl.className = "status-fora";
+    statusText = "Fora do expediente";
+    badgeClass = "status-badge-fora";
+    icon = "\u2717"; // ✗
   }
+
+  statusEl.innerHTML = `
+    <div class="status-badge ${badgeClass}">
+      <span class="status-icon">${icon}</span>
+      <span>${statusText}</span>
+    </div>
+  `;
 }
 
 setInterval(atualizarStatus, 5000);
 atualizarStatus();
 
-function carregarUsuario() {
-  const nome = localStorage.getItem("usuarioNome");
-  const el = document.getElementById("nomeUsuario");
+// ─── PROFILE LINK ───
+function atualizarPerfil() {
+  const nome = usuarioNome || "Usuário";
+  const foto = usuarioFoto || null;
 
-  if (el) {
-    el.textContent = nome;
+  // Calcular iniciais
+  const iniciais = nome
+    .split(" ")
+    .map(n => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
+  // Atualizar avatar
+  const avatar = document.getElementById("profileAvatar");
+  document.getElementById("profileInitials").textContent = iniciais;
+
+  // Atualizar nome
+  document.getElementById("profileName").textContent = nome;
+
+  // Se houver foto, usar como background
+  if (foto) {
+    avatar.style.backgroundImage = `url('${foto}')`;
+    avatar.style.backgroundSize = "cover";
+    avatar.style.backgroundPosition = "center";
+    avatar.innerHTML = "";
   }
 }
 
-carregarUsuario();
+atualizarPerfil();
 
-
-// 🌙 AQUI É O TEMA GLOBAL (CORRIGIDO)
+// ─── TEMA GLOBAL ───
 function aplicarTemaGlobal() {
   const tema = localStorage.getItem("tema") || "light";
 
@@ -80,10 +117,9 @@ function aplicarTemaGlobal() {
 
 aplicarTemaGlobal();
 
+// ─── LOGOUT ───
 function logout(event) {
-  event.preventDefault(); // 🔥 impede o "#"
-
+  event.preventDefault();
   sessionStorage.clear();
-
   window.top.location = "/logout";
 }
