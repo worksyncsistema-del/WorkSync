@@ -1,16 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, Flask, jsonify, session, request
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from utils.auth_decorator import login_required, admin_required
-from flask import Flask, render_template, jsonify, session
-from db import conectar_bd
-from flask import request, render_template
 import psycopg2.extras
-from db import buscar_usuario_por_email, salvar_token
 import secrets
-from werkzeug.security import generate_password_hash
-from db import buscar_usuario_por_email, atualizar_senha, limpar_token
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
+from db import buscar_usuario_por_email, salvar_token, conectar_bd, atualizar_senha, limpar_token
 
 views_bp = Blueprint("views", __name__)
 
@@ -25,7 +20,9 @@ def home():
 def login_page():
     return render_template("login.html")
 
-
+# =========================
+# FUNÇÃO DE LOGIN
+# =========================
 @views_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -48,7 +45,6 @@ def login():
     WHERE REPLACE(REPLACE(u.cpf, '.', ''), '-', '') = %s
 """, (cpf,))
 
-
     user = cursor.fetchone()
     conn.close()
 
@@ -60,11 +56,7 @@ def login():
     if not user['senha_hash']:
         return jsonify({'erro': 'Usuário ainda não definiu senha'}), 400
 
-    print("Hash no banco:", user['senha_hash'])
-    print("Senha digitada:", senha)
-
     resultado = check_password_hash(user['senha_hash'], senha)
-    print("Resultado check:", resultado)
 
     if not resultado:
         return jsonify({'erro': 'Senha incorreta'}), 401
@@ -76,7 +68,7 @@ def login():
     return jsonify({
     'ok': True,
     'nome': user['nome'],
-    'tipo': user['tipo_perfil']  # 🔥
+    'tipo': user['tipo_perfil']
 }), 200
 
 @views_bp.route("/recuperacaoSenha")
@@ -86,7 +78,6 @@ def recuperacao_senha():
 # =========================
 # MENU
 # =========================
-
 @views_bp.route("/menu")
 @login_required
 def menu():
@@ -239,10 +230,6 @@ def editar_horarios():
 # =========================
 # LISTAGEM DE USUÁRIOS
 # =========================
-
-from flask import jsonify
-import psycopg2.extras
-
 @views_bp.route("/listarUsuarios")
 @login_required
 def listar_usuarios():
@@ -381,7 +368,7 @@ def resetar_senha():
     return jsonify({'ok': True}), 200
 
 # =========================
-# HORA DO SERVIDOR
+# FUNÇÃO QUE RETORNA A HORA DO SERVIDOR
 # =========================
 @views_bp.route("/hora-servidor")
 def hora_servidor():

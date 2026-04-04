@@ -44,7 +44,6 @@ def salvar_cadastro():
         if "," in imagem:
             imagem = imagem.split(",")[1]
 
-        # 🔥 base64 → imagem
         nparr = np.frombuffer(base64.b64decode(imagem), np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
@@ -57,7 +56,6 @@ def salvar_cadastro():
         register_vector(conn)
         cursor = conn.cursor()
 
-        # limite de 5 fotos
         cursor.execute("SELECT COUNT(*) FROM fotos WHERE nome = %s", (nome,))
         numero_fotos = cursor.fetchone()[0]
 
@@ -71,7 +69,6 @@ def salvar_cadastro():
 
         numero_fotos += 1
 
-        # 🔥 salvar temporário só pro Cloudinary
         temp_path = f"{uuid.uuid4()}.jpg"
         cv2.imwrite(temp_path, img)
 
@@ -86,7 +83,6 @@ def salvar_cadastro():
 
         os.remove(temp_path)
 
-        # 🔥 gerar embedding
         embedding = DeepFace.represent(
             img_path=img,
             model_name="Facenet",
@@ -98,7 +94,6 @@ def salvar_cadastro():
         embedding = embedding / np.linalg.norm(embedding)
         embedding_list = [float(x) for x in embedding]
 
-        # salvar no banco
         cursor.execute(
             "INSERT INTO fotos (nome, url, embedding) VALUES (%s, %s, %s)",
             (nome, url_imagem, embedding_list)
@@ -132,7 +127,6 @@ def reconhecer():
         if "," in imagem:
             imagem = imagem.split(",")[1]
 
-        # 🔥 base64 → imagem
         nparr = np.frombuffer(base64.b64decode(imagem), np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
@@ -141,7 +135,6 @@ def reconhecer():
 
         img = cv2.resize(img, (640, 480))
 
-        # detectar rosto
         faces = DeepFace.extract_faces(
             img_path=img,
             detector_backend="opencv",
@@ -154,7 +147,6 @@ def reconhecer():
         if faces[0]["confidence"] < 0.90:
             return jsonify({"erro": "Rosto não confiável"})
 
-        # 🔥 gerar embedding
         embedding_input = DeepFace.represent(
             img_path=img,
             model_name="Facenet",
@@ -170,7 +162,6 @@ def reconhecer():
         register_vector(conn)
         cursor = conn.cursor()
 
-        # 🔥 busca vetorial
         cursor.execute("""
             SELECT nome, embedding <-> %s::vector AS distancia
             FROM fotos
