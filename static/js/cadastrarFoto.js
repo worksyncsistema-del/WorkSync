@@ -2,30 +2,39 @@ const video = document.getElementById('video');
 const contador = document.getElementById("contador");
 const barra = document.getElementById("barra");
 const btnCapturar = document.getElementById("btnCapturar");
+const modal = document.getElementById('modal-instrucoes');
 
 let fotosCapturadas = 0;
 const maxFotos = 5;
+
+let cadastroIniciado = false;
+let nomeGlobal = "";
 
 // =========================
 // CAMERA
 // =========================
 function ligarCamera() {
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => {
-            video.srcObject = stream;
+    navigator.mediaDevices.getUserMedia({
+        video: {
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            facingMode: "user"
+        }
+    })
+    .then(stream => {
+        video.srcObject = stream;
 
-            video.onloadedmetadata = () => {
-                video.play();
-                console.log("Câmera pronta!");
-            };
-        })
-        .catch(error => {
-            alert("Erro ao acessar a câmera!");
-            console.error(error);
-        });
+        video.onloadedmetadata = () => {
+            video.play();
+            console.log("Câmera pronta!");
+        };
+    })
+    .catch(error => {
+        alert("Erro ao acessar a câmera!");
+        console.error(error);
+    });
 }
 
-// inicia automaticamente
 window.addEventListener("load", ligarCamera);
 
 // =========================
@@ -38,20 +47,22 @@ function capturarImagem() {
     }
 
     const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    const largura = 320;
+    const altura = 240;
+
+    canvas.width = largura;
+    canvas.height = altura;
 
     const ctx = canvas.getContext("2d");
-    ctx.drawImage(video, 0, 0);
+    ctx.drawImage(video, 0, 0, largura, altura);
 
-    return canvas.toDataURL("image/jpeg");
+    return canvas.toDataURL("image/jpeg", 0.85);
 }
 
 // =========================
-// CADASTRO (AGORA COMPLETO)
+// CADASTRO
 // =========================
-function cadastrar() {
-
+async function cadastrar() {
     const nome = document.getElementById("nome").value.trim();
 
     if (!nome) {
@@ -66,30 +77,44 @@ function cadastrar() {
     if (!imagemBase64) return;
 
     btnCapturar.disabled = true;
-    btnCapturar.innerText = "Processando...";
+    btnCapturar.innerText = "Salvando...";
 
-    fetch('/salvar_cadastro', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            nome: nome,
-            imagem: imagemBase64
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
+    try {
+        if (!cadastroIniciado) {
+            const resInicio = await fetch("/iniciar_cadastro", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nome })
+            });
 
-        if (data.erro) {
-            throw new Error(data.erro);
+            const dataInicio = await resInicio.json();
+
+            if (!resInicio.ok) {
+                throw new Error(dataInicio.erro || "Erro ao iniciar cadastro");
+            }
+
+            cadastroIniciado = true;
+            nomeGlobal = nome;
         }
 
-        // 📊 CONTADOR
+        const resFoto = await fetch("/adicionar_foto", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                nome: nomeGlobal,
+                imagem: imagemBase64
+            })
+        });
+
+        const dataFoto = await resFoto.json();
+
+        if (!resFoto.ok) {
+            throw new Error(dataFoto.erro || "Erro ao salvar foto");
+        }
+
         fotosCapturadas++;
         contador.innerText = `Foto ${fotosCapturadas} de 5`;
 
-        // 📊 BARRA
         const progresso = (fotosCapturadas / maxFotos) * 100;
         barra.style.width = progresso + "%";
 
@@ -103,27 +128,58 @@ function cadastrar() {
 
         barra.style.background = cores[fotosCapturadas - 1];
 
-        // ✅ FINALIZA
         if (fotosCapturadas === maxFotos) {
+            btnCapturar.innerText = "Processando cadastro...";
+
+            const resFinal = await fetch("/finalizar_cadastro", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nome: nomeGlobal })
+            });
+
+            const dataFinal = await resFinal.json();
+
+            if (!resFinal.ok) {
+                let mensagemErro = dataFinal.erro || "Erro ao finalizar cadastro";
+
+                if (dataFinal.erros && dataFinal.erros.length > 0) {
+                    mensagemErro += "\n\nDetalhes:\n" + dataFinal.erros.join("\n");
+                }
+
+                throw new Error(mensagemErro);
+            }
+
+            let mensagem = dataFinal.mensagem || "Cadastro concluído!";
+
+            if (dataFinal.erros && dataFinal.erros.length > 0) {
+                mensagem += "\n\nObservações:\n" + dataFinal.erros.join("\n");
+            }
+
             setTimeout(() => {
-                alert("Cadastro concluído!");
+                alert(mensagem);
+
+                fotosCapturadas = 0;
+                cadastroIniciado = false;
+                nomeGlobal = "";
+                contador.innerText = "Foto 0 de 5";
+                barra.style.width = "0%";
+
                 window.location.href = "/menu";
             }, 300);
         }
 
-    })
-    .catch(error => {
+    } catch (error) {
         console.error(error);
-        alert("Erro ao cadastrar");
-    })
-    .finally(() => {
+        alert(error.message);
+    } finally {
         btnCapturar.disabled = false;
         btnCapturar.innerText = "Capturar Foto";
-    });
+    }
 }
 
-const modal = document.getElementById('modal-instrucoes');
-
+// =========================
+// MODAL
+// =========================
 function abrirInstrucoes() {
     modal.classList.add('active');
 }
@@ -133,7 +189,7 @@ function fecharInstrucoes() {
 }
 
 window.onclick = function(event) {
-    if (event.target === modal) {
+    if (event.target == modal) {
         fecharInstrucoes();
     }
 }

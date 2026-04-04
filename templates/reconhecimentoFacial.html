@@ -6,13 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reconhecimento Facial - WorkSync</title>
 
-    <!-- CSS Global (SEMPRE PRIMEIRO) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/worksync-global.css') }}">
-    <!-- CSS Específico -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reconhecimentoFacial.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dark-mode.css') }}">
 
-    <!-- Fonte -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,145 +17,50 @@
 
 <body>
 
-    <div class="facial-page">
+<div class="facial-page">
+    <div class="facial-content">
 
-        <!-- Main Content -->
-        <div class="facial-content">
+        <!-- CAMERA -->
+        <div class="card camera-card">
+            <div class="camera-container">
+                <video id="video" class="camera-video" autoplay playsinline></video>
 
-            <!-- Camera Section -->
-            <div class="card camera-card">
-                <div class="camera-container">
-                    <video id="video" class="camera-video" autoplay playsinline></video>
-                    <div class="camera-placeholder">
-                        <div class="camera-frame-guide"></div>
-                        <p class="camera-status">Câmera desativada</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Buttons -->
-            <div class="button-container">
-                <button class="btn-primary" onclick="iniciarEReconhecer()">Bater Ponto</button>
-                <button class="btn-secondary" onclick="abrirInstrucoes()">Instruções</button>
-                <button class="btn-secondary" onclick="history.back()">Voltar</button>
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Modal de Instruções -->
-    <div id="modal-instrucoes" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Instruções para Reconhecimento</h2>
-                <button class="modal-close" onclick="fecharInstrucoes()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="instructions-list">
-                    <div class="instruction-item">
-                        <div class="instruction-number">1</div>
-                        <p>Posicione o rosto próximo à câmera</p>
-                    </div>
-                    <div class="instruction-item">
-                        <div class="instruction-number">2</div>
-                        <p>Permaneça de frente para a câmera</p>
-                    </div>
-                    <div class="instruction-item">
-                        <div class="instruction-number">3</div>
-                        <p>Esteja em um ambiente com iluminação adequada</p>
-                    </div>
-                    <div class="instruction-item">
-                        <div class="instruction-number">4</div>
-                        <p>Não utilize acessórios que obstruam o rosto (boné, óculos, etc)</p>
-                    </div>
+                <div class="camera-placeholder">
+                    <div class="camera-frame-guide"></div>
+                    <p class="camera-status">Câmera desativada</p>
                 </div>
             </div>
         </div>
+        <!-- BOTÕES -->
+        <div class="button-container">
+            <button id="btnRegistrar" class="btn-primary" type="button">Bater Ponto</button>
+            <button id="btnInstrucoes" class="btn-secondary" type="button">Instruções</button>
+            <button class="btn-secondary" type="button" onclick="history.back()">Voltar</button>
+        </div>
+
     </div>
+</div>
 
-    <script>
-        const video = document.getElementById('video');
-        const modal = document.getElementById('modal-instrucoes');
+<!-- MODAL -->
+<div id="modal-instrucoes" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Instruções para Reconhecimento</h2>
+            <button id="btnFecharModal" class="modal-close">&times;</button>
+        </div>
 
-        function abrirInstrucoes() {
-            modal.classList.add('active');
-        }
+        <div class="modal-body">
+            <div class="instructions-list">
+                <div class="instruction-item"><div class="instruction-number">1</div><p>Rosto próximo à câmera</p></div>
+                <div class="instruction-item"><div class="instruction-number">2</div><p>Olhe para frente</p></div>
+                <div class="instruction-item"><div class="instruction-number">3</div><p>Boa iluminação</p></div>
+                <div class="instruction-item"><div class="instruction-number">4</div><p>Sem acessórios</p></div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        function fecharInstrucoes() {
-            modal.classList.remove('active');
-        }
-
-        // Fechar modal ao clicar fora
-        window.onclick = function (event) {
-            if (event.target === modal) {
-                fecharInstrucoes();
-            }
-        }
-
-        function iniciarEReconhecer() {
-
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => {
-
-                    video.srcObject = stream;
-                    video.play();
-                    document.querySelector(".camera-placeholder").style.display = "none";
-
-                    // Aguarda 2 segundos para estabilizar
-                    setTimeout(() => {
-
-                        const canvas = document.createElement("canvas");
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
-
-                        const ctx = canvas.getContext("2d");
-                        ctx.drawImage(video, 0, 0);
-
-                        const imagem = canvas.toDataURL("image/jpeg");
-
-                        // DESLIGA A CÂMERA IMEDIATAMENTE
-                        stream.getTracks().forEach(track => track.stop());
-                        video.srcObject = null;
-
-                        // envia para o servidor
-                        fetch("/reconhecer", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({ imagem: imagem })
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-
-                                if (data.erro) {
-                                    alert(data.erro);
-                                } else {
-                                    alert(
-                                        "Funcionário identificado: " +
-                                        data.nome +
-                                        "\nPonto registrado: " +
-                                        data.data_hora
-                                    );
-                                }
-
-                            })
-                            .catch(error => {
-                                console.error("Erro no reconhecimento:", error);
-                                alert("Erro ao realizar reconhecimento.");
-                            });
-
-                    }, 2000);
-
-                })
-                .catch(error => {
-                    console.error("Erro ao acessar câmera:", error);
-                    alert("Não foi possível acessar a câmera.");
-                });
-        }
-    </script>
+<script src="{{ url_for('static', filename='js/reconhecimento.js') }}"></script>
 
 </body>
-
 </html>
