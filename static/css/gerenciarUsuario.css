@@ -76,6 +76,7 @@ td {
   color: var(--color-column);
   font-weight: var(--font-weight-medium);
 }
+
 .col-nome {
   width: 40%;
   text-align: left;

@@ -6,14 +6,23 @@
     font-family: 'Montserrat';
 }
 
-body {
-    /* fundo da pagina */
-    background: #f8f9fa;
+html, body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    background: var(--background-color);
+    color: var(--text-color);
 }
 
 .perfil-page {
-    /* div dos dados */
     padding: 30px;
+    background: var(--background-color);
+    min-height: calc(100vh - 92px);
+}
+
+form#formCadastro {
+    min-height: calc(100vh - 92px);
+    background: var(--background-color);
 }
 
 .card {
@@ -166,3 +175,4 @@ body {
 input[readonly] {
     cursor: default;
 }
+
