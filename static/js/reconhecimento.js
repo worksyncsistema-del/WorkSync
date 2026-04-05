@@ -53,13 +53,13 @@ function capturarImagem() {
 // RECONHECIMENTO
 // =========================
 async function registrarPonto() {
-    if (processando) return;
+    if (processando) return false;
     processando = true;
 
     const imagem = capturarImagem();
     if (!imagem) {
         processando = false;
-        return;
+        return false;
     }
 
     try {
@@ -72,12 +72,10 @@ async function registrarPonto() {
         const dados = await resposta.json();
         console.log("RETORNO:", dados);
 
-        // 👉 pega elementos (podem não existir)
         const nomeRegistro = document.getElementById("nomeRegistro");
         const dataRegistro = document.getElementById("dataRegistro");
         const horaRegistro = document.getElementById("horaRegistro");
 
-        // 👉 só atualiza se existir
         if (nomeRegistro && dados.nome) {
             nomeRegistro.innerText = "Nome: " + dados.nome;
         }
@@ -90,7 +88,6 @@ async function registrarPonto() {
             horaRegistro.innerText = "Hora: " + dados.horario;
         }
 
-        // 👉 feedback
         if (dados.nome && dados.data && dados.horario) {
             alert(
                 "Funcionário identificado: " + dados.nome +
@@ -98,23 +95,43 @@ async function registrarPonto() {
                 " às " + dados.horario
             );
 
-            // feedback visual opcional
             video.style.border = "4px solid green";
             setTimeout(() => video.style.border = "none", 2000);
 
+            return true;
         } else {
-            alert(dados.erro || "Não reconhecido");
-
             video.style.border = "4px solid red";
             setTimeout(() => video.style.border = "none", 2000);
+
+            return false;
         }
 
     } catch (erro) {
         console.error("Erro:", erro);
         alert("Erro no reconhecimento.");
+        return false;
     } finally {
         processando = false;
     }
+}
+
+// =========================
+// 3 TENTATIVAS
+// =========================
+async function registrarComTentativas() {
+    for (let i = 0; i < 3; i++) {
+        console.log("Tentativa:", i + 1);
+
+        const sucesso = await registrarPonto();
+
+        if (sucesso) {
+            return;
+        }
+
+        await new Promise(r => setTimeout(r, 500));
+    }
+
+    alert("Rosto desconhecido!");
 }
 
 // =========================
@@ -144,5 +161,5 @@ window.addEventListener("click", (event) => {
 window.addEventListener("load", ligarCamera);
 
 if (btnRegistrar) {
-    btnRegistrar.addEventListener("click", registrarPonto);
+    btnRegistrar.addEventListener("click", registrarComTentativas);
 }
