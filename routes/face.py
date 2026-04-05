@@ -27,8 +27,9 @@ DETECTOR_CADASTRO = "opencv"
 DETECTOR_RECONHECIMENTO = "opencv"
 
 LIMITE_FOTOS = 5
-LIMIAR_RECONHECIMENTO = 0.75
+LIMIAR_RECONHECIMENTO = 0.84
 CONFIANCA_MINIMA = 0.30
+MARGEM_MINIMA = 0.04
 PASTA_TEMP = "temp_cadastros"
 INTERVALO_MINIMO_PRESENCA_SEGUNDOS = 60
 
@@ -68,7 +69,7 @@ def limpar_pasta(caminho):
         shutil.rmtree(caminho, ignore_errors=True)
 
 
-def imagem_nitida(img, limite=80):
+def imagem_nitida(img, limite=40):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     variancia = cv2.Laplacian(gray, cv2.CV_64F).var()
     return variancia >= limite
@@ -160,7 +161,7 @@ def reconhecer_uma_imagem(cursor, imagem_base64):
         FROM fotos
         ORDER BY distancia
         LIMIT 5
-    """,
+        """,
         (embedding_input,),
     )
 
@@ -169,10 +170,38 @@ def reconhecer_uma_imagem(cursor, imagem_base64):
     if not resultados:
         return None
 
-    melhor_nome = resultados[0][0]
-    melhor_distancia = float(resultados[0][1])
+    resultados_ordenados = [(nome, float(distancia)) for nome, distancia in resultados]
+    resultados_ordenados.sort(key=lambda x: x[1])
 
-    return melhor_nome, melhor_distancia
+    nome1, dist1 = resultados_ordenados[0]
+
+    # pegar o segundo MELHOR NOME DIFERENTE
+    nome2, dist2 = None, 999.0
+
+    for nome, distancia in resultados_ordenados[1:]:
+        if nome != nome1:
+            nome2, dist2 = nome, distancia
+            break
+
+    print(f"Top 5 resultados: {resultados_ordenados}")
+    print(f"1º: {nome1} ({dist1}) | 2º: {nome2} ({dist2})")
+
+    if dist1 <= LIMIAR_RECONHECIMENTO and (dist2 - dist1) >= MARGEM_MINIMA:
+        return {
+            "nome": nome1,
+            "distancia": dist1,
+            "segundo_nome": nome2,
+            "segunda_distancia": dist2,
+            "valido": True,
+        }
+
+    return {
+        "nome": nome1,
+        "distancia": dist1,
+        "segundo_nome": nome2,
+        "segunda_distancia": dist2,
+        "valido": False,
+    }
 
 
 # =========================
@@ -415,22 +444,51 @@ def reconhecer():
         register_vector(conn)
         cursor = conn.cursor()
 
-        resultados_finais = []
+        resultados_validos = []
+        resultados_invalidos = []
 
         for img_base64 in lista_imagens:
             resultado = reconhecer_uma_imagem(cursor, img_base64)
-            if resultado:
-                resultados_finais.append(resultado)
+            if not resultado:
+                continue
 
-        if not resultados_finais:
+            if resultado["valido"]:
+                resultados_validos.append(resultado)
+            else:
+                resultados_invalidos.append(resultado)
+
+        if not resultados_validos:
+            melhor_tentativa = None
+
+            if resultados_invalidos:
+                melhor_tentativa = min(resultados_invalidos, key=lambda x: x["distancia"])
+
             cursor.close()
             conn.close()
+
+            if melhor_tentativa:
+                return (
+                    jsonify(
+                        {
+                            "erro": "Não reconhecido",
+                            "nome_mais_proximo": melhor_tentativa["nome"],
+                            "distancia": melhor_tentativa["distancia"],
+                            "segundo_nome": melhor_tentativa["segundo_nome"],
+                            "segunda_distancia": melhor_tentativa["segunda_distancia"],
+                        }
+                    ),
+                    404,
+                )
+
             return jsonify({"erro": "Nenhum rosto válido detectado"}), 404
 
         contagem = {}
         distancias = {}
 
-        for nome, distancia in resultados_finais:
+        for r in resultados_validos:
+            nome = r["nome"]
+            distancia = r["distancia"]
+
             contagem[nome] = contagem.get(nome, 0) + 1
             distancias.setdefault(nome, []).append(distancia)
 
@@ -439,39 +497,22 @@ def reconhecer():
         melhor_distancia_final = min(distancias_nome)
         media_distancia = sum(distancias_nome) / len(distancias_nome)
 
-        print("Resultados:", resultados_finais)
+        print("Resultados válidos:", resultados_validos)
         print("Nome final:", nome_final)
         print("Melhor distância:", melhor_distancia_final)
         print("Média distância:", media_distancia)
 
-        # pode testar melhor_distancia_final ou media_distancia
-        if melhor_distancia_final <= LIMIAR_RECONHECIMENTO:
-            agora = datetime.now()
+        agora = datetime.now()
 
-            if pode_registrar_presenca(cursor, nome_final, agora):
-                cursor.execute(
-                    """
-                    INSERT INTO presenca (nome, data_registro, horario_registro)
-                    VALUES (%s, %s, %s)
-                    """,
-                    (nome_final, agora.date(), agora.time().replace(microsecond=0)),
-                )
-                conn.commit()
-
-            cursor.close()
-            conn.close()
-
-            return (
-                jsonify(
-                    {
-                        "nome": nome_final,
-                        "distancia": melhor_distancia_final,
-                        "data": agora.strftime("%d/%m/%Y"),
-                        "horario": agora.strftime("%H:%M:%S"),
-                    }
-                ),
-                200,
+        if pode_registrar_presenca(cursor, nome_final, agora):
+            cursor.execute(
+                """
+                INSERT INTO presenca (nome, data_registro, horario_registro)
+                VALUES (%s, %s, %s)
+                """,
+                (nome_final, agora.date(), agora.time().replace(microsecond=0)),
             )
+            conn.commit()
 
         cursor.close()
         conn.close()
@@ -479,12 +520,14 @@ def reconhecer():
         return (
             jsonify(
                 {
-                    "erro": "Não reconhecido",
+                    "nome": nome_final,
                     "distancia": melhor_distancia_final,
                     "media_distancia": media_distancia,
+                    "data": agora.strftime("%d/%m/%Y"),
+                    "horario": agora.strftime("%H:%M:%S"),
                 }
             ),
-            404,
+            200,
         )
 
     except Exception as e:
