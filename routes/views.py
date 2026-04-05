@@ -156,6 +156,11 @@ def gerenciar_usuario():
 def configuracoes():
     return render_template("configuracoes.html")
 
+@views_bp.route("/cadastroEmpresas")
+@login_required
+def cadastroEmpresas():
+    return render_template("cadastroEmpresas.html")
+
 @views_bp.route("/editarUsuario")
 @login_required
 def editar_usuario():
