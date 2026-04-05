@@ -21,18 +21,21 @@ function ligarCamera() {
             facingMode: "user"
         }
     })
-    .then(stream => {
-        video.srcObject = stream;
+        .then(stream => {
+            video.srcObject = stream;
 
-        video.onloadedmetadata = () => {
-            video.play();
-            console.log("Câmera pronta!");
-        };
-    })
-    .catch(error => {
-        alert("Erro ao acessar a câmera!");
-        console.error(error);
-    });
+            video.onloadedmetadata = () => {
+                video.play();
+                console.log("Câmera pronta!");
+
+                const placeholder = document.querySelector(".camera-placeholder");
+                if (placeholder) placeholder.style.display = "none";
+            };
+        })
+        .catch(error => {
+            alert("Erro ao acessar a câmera!");
+            console.error(error);
+        });
 }
 
 window.addEventListener("load", ligarCamera);
@@ -188,7 +191,7 @@ function fecharInstrucoes() {
     modal.classList.remove('active');
 }
 
-window.onclick = function(event) {
+window.onclick = function (event) {
     if (event.target == modal) {
         fecharInstrucoes();
     }
