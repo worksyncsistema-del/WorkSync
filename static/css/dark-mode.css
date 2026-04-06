@@ -43,6 +43,14 @@ html.dark-mode {
     --color-primary-dark: #0a3d5c;
 
     background-color: #121212;
+
+    /* Cor das legendas*/
+    --color-text-light: #cfcfcf;
+    --color-text-medium: #cfcfcf;
+
+    /*Cor hoje*/
+    --color-info-light: rgba(77, 163, 217, 0.2);
+    --color-info: #6bbcff;
 }
 
 /* ===== RESET IMPORTANTE (resolve fundo branco) ===== */

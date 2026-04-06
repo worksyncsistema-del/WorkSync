@@ -54,6 +54,7 @@
   color: var(--color-text-light);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
 .jornada-label svg {
