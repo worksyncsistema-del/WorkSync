@@ -7,6 +7,7 @@ function toggleDia(id) {
     dia.style.display = "none";
   }
 }
+
 function alternarJornada() {
   const tipo = document.getElementById("tipoJornada").value;
 

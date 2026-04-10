@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, Flask, jsonify, session, request
+from flask import Blueprint, app, render_template, redirect, url_for, Flask, jsonify, session, request
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from utils.auth_decorator import login_required, admin_required

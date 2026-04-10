@@ -67,3 +67,17 @@ window.onload = () => {
         addEmail();
     }
 };
+
+async function salvarEmpresa(){
+    console.log("clicou");
+    const dadosEmpresa = {
+        cnpj: document.getElementById("cnpj").value,
+        razao: document.getElementById("razao").value
+    }
+
+    const res = await fetch("http://127.0.0.1:5000/cadastrar_empresa", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(dadosEmpresa),
+  });
+}

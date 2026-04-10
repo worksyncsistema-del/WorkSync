@@ -132,3 +132,36 @@ def cadastrar_usuario():
             "status": "erro",
             "mensagem": str(e)
         })
+    
+
+
+@auth_bp.route('/cadastrar_empresa', methods=['POST'])
+def cadastrar_empresa():
+    try:
+        dadosEmp = request.get_json()
+
+        conn = conectar_bd()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+        cursor.execute("""
+            INSERT INTO empresas_teste (cnpj, razao)
+            VALUES (%s, %s)
+        """, (
+            dadosEmp['cnpj'],
+            dadosEmp['razao']
+        ))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({
+            "status": "ok",
+            "mensagem": "Empresa cadastrada com sucesso"
+        })
+
+    except Exception as e:
+        return jsonify({
+            "status": "erro",
+            "mensagem": str(e)
+        })
