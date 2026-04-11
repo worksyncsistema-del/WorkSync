@@ -61,7 +61,7 @@ def garantir_pasta_temp():
 
 
 def pasta_usuario(nome):
-    return os.path.join(PASTA_TEMP, nome)
+    return os.path.join(PASTA_TEMP, str(nome))
 
 
 def limpar_pasta(caminho):
@@ -216,7 +216,7 @@ def iniciar_cadastro():
         if not nome:
             return jsonify({"erro": "Nome inválido!"}), 400
 
-        nome = nome.strip().title()
+        nome = nome.strip()
 
         garantir_pasta_temp()
         pasta = pasta_usuario(nome)
@@ -246,7 +246,7 @@ def adicionar_foto():
         if not nome or not imagem:
             return jsonify({"erro": "Dados inválidos!"}), 400
 
-        nome = nome.strip().title()
+        nome = nome.strip()
         pasta = pasta_usuario(nome)
 
         if not os.path.exists(pasta):
@@ -302,7 +302,7 @@ def finalizar_cadastro():
         if not nome:
             return jsonify({"erro": "Nome inválido!"}), 400
 
-        nome = nome.strip().title()
+        nome = nome.strip()
         pasta = pasta_usuario(nome)
 
         if not os.path.exists(pasta):

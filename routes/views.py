@@ -6,6 +6,8 @@ import psycopg2.extras
 import secrets
 from werkzeug.security import generate_password_hash, check_password_hash
 from db import buscar_usuario_por_email, salvar_token, conectar_bd, atualizar_senha, limpar_token
+from routes.face import pasta_usuario
+import os
 
 views_bp = Blueprint("views", __name__)
 
@@ -387,6 +389,35 @@ def hora_servidor():
         "hora": agora.strftime("%H:%M:%S"),
         "dia": dia_semana
     }
+
+
+
+@views_bp.route("/listar_usuarios_select", methods=["GET"])
+def listar_usuarios_select():
+    try:
+        conn = conectar_bd()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT u.id, u.nome
+            FROM usuarios u
+            WHERE NOT EXISTS (
+                SELECT 1 FROM fotos f WHERE f.nome = u.nome
+            )
+        """)
+
+        usuarios = cursor.fetchall()
+
+        lista = [{"id": u[0], "nome": u[1]} for u in usuarios]
+
+        cursor.close()
+        conn.close()
+
+        return jsonify(lista)
+
+    except Exception as e:
+        print("ERRO:", e)
+        return jsonify([])
 
 # =========================
 # STATUS (MOCK)

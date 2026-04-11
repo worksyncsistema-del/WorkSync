@@ -10,6 +10,25 @@ const maxFotos = 5;
 let cadastroIniciado = false;
 let nomeGlobal = "";
 
+
+async function carregarUsuarios() {
+  const res = await fetch("/listar_usuarios_select");
+  const usuarios = await res.json();
+
+    const select = document.getElementById("nome");
+    const nome = select.options[select.selectedIndex].text;
+
+  usuarios.forEach((u) => {
+    const option = document.createElement("option");
+    option.value = u.id;
+    option.textContent = u.nome;
+
+    select.appendChild(option);
+  });
+}
+
+carregarUsuarios();
+
 // =========================
 // CAMERA
 // =========================
@@ -66,8 +85,8 @@ function capturarImagem() {
 // CADASTRO
 // =========================
 async function cadastrar() {
-    const nome = document.getElementById("nome").value.trim();
-
+    const select = document.getElementById("nome");
+    const nome = select.options[select.selectedIndex].text;
     if (!nome) {
         alert("Digite seu nome!");
         return;
