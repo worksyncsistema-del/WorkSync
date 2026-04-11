@@ -186,7 +186,7 @@ async function cadastrar() {
                 contador.innerText = "Foto 0 de 5";
                 barra.style.width = "0%";
 
-                window.location.href = "/menu";
+                window.location.reload();
             }, 300);
         }
 
