@@ -109,6 +109,7 @@ def controle_ponto():
 def inicio():
     return render_template("inicio.html")
 
+
 @views_bp.route("/perfil")
 @login_required
 def perfil():
@@ -118,14 +119,18 @@ def perfil():
     cursor.execute("""
         SELECT 
             u.nome, u.cpf, u.email, u.telefone,
-            f.cargo, f.setor, f.tipo_perfil,
-            f.data_admissao, f.tipo_contrato
+            c.nome AS cargo_nome,
+            f.setor, f.tipo_perfil,
+            f.data_admissao, f.tipo_contrato,
+            f.matricula, f.carga_horaria, f.jornada_padrao
         FROM usuarios u
-        JOIN funcionarios f ON u.id = f.usuario_id
+        LEFT JOIN funcionarios f ON u.id = f.usuario_id
+        LEFT JOIN cargos c ON u.cargo_id = c.id
         WHERE u.id = %s
     """, (session['user_id'],))
 
     user = cursor.fetchone()
+
     conn.close()
 
     return render_template("perfil.html", user=user)

@@ -63,7 +63,7 @@
       <div class="grid">
         <div class="campo">
           <label>Cargo</label>
-          <input type="text" id="cargo" value="{{ user.cargo.title() }}" disabled>
+         <input type="text" id="cargo" value="{{ user.cargo_nome if user.cargo_nome else 'Sem cargo' }}" disabled>
         </div>
 
         <div class="campo">

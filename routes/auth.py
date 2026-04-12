@@ -27,28 +27,28 @@ def cadastrar_usuario():
         cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
         cursor.execute("""
-            INSERT INTO usuarios (nome, email, telefone, cpf)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO usuarios (nome, email, telefone, cpf, cargo_id)
+            VALUES (%s, %s, %s, %s, %s)
             RETURNING id
         """, (
             dados['nome'],
             dados['email'],
             dados['telefone'],
-            dados['cpf']
+            dados['cpf'],
+            dados['cargo_id']
         ))
 
         usuario_id = cursor.fetchone()['id']
 
         cursor.execute("""
             INSERT INTO funcionarios (
-                usuario_id, cargo, setor, tipo_perfil,
+                usuario_id, setor, tipo_perfil,
                 matricula, data_admissao, tipo_contrato,
                 carga_horaria, jornada_padrao
             )
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
         """, (
             usuario_id,
-            dados['cargo'],
             dados['setor'],
             dados['tipo_perfil'],
             dados['matricula'],
@@ -105,3 +105,20 @@ def cadastrar_empresa():
             "status": "erro",
             "mensagem": str(e)
         })
+
+
+# =========================
+# LISTAR CARGOS DO BANCO
+# =========================
+@auth_bp.route('/listar_cargos', methods=['GET'])
+def listar_cargos():
+    conn = conectar_bd()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    cursor.execute("SELECT id, nome FROM cargos ORDER BY nome")
+    cargos = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify(cargos)

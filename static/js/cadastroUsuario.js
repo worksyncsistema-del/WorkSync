@@ -1,3 +1,21 @@
+async function carregarCargos() {
+  const select = document.getElementById("cargo");
+
+  const res = await fetch("http://127.0.0.1:5000/listar_cargos");
+  const cargos = await res.json();
+
+  select.innerHTML = '<option value="">Selecione</option>';
+
+  cargos.forEach((cargo) => {
+    const option = document.createElement("option");
+    option.value = cargo.id;
+    option.textContent = cargo.nome;
+    select.appendChild(option);
+  });
+}
+
+window.onload = carregarCargos;
+
 function toggleDia(id) {
   const dia = document.getElementById(id);
 
@@ -36,37 +54,36 @@ function formatarCPF(cpf) {
 }
 
 async function cadastrarUsuario() {
-
-const camposObrigatorios = [
-  "nome",
-  "email",
-  "cpf",
-  "telefone",
-  "cargo",
-  "setor",
-  "tipo_perfil",
-  "tipo_contrato",
-  "data_admissao",
-  "carga_horaria",
+  const camposObrigatorios = [
+    "nome",
+    "email",
+    "cpf",
+    "telefone",
+    "cargo",
+    "setor",
+    "tipo_perfil",
+    "tipo_contrato",
+    "data_admissao",
+    "carga_horaria",
   ];
 
-for (let id of camposObrigatorios) {
-  const valor = document.getElementById(id).value.trim();
+  for (let id of camposObrigatorios) {
+    const valor = document.getElementById(id).value.trim();
 
-  if (!valor) {
-    alert(`O campo ${id} é obrigatório!`);
-    document.getElementById(id).focus();
-    return;
-  }
+    if (!valor) {
+      alert(`O campo ${id} é obrigatório!`);
+      document.getElementById(id).focus();
+      return;
+    }
   }
 
   // validação do nome
-    const nomeInput = document.getElementById("nome").value.trim();
+  const nomeInput = document.getElementById("nome").value.trim();
 
-    if (!/^[A-Za-zÀ-ÿ\s]+$/.test(nomeInput)) {
-      alert("O nome deve conter apenas letras!");
-      document.getElementById("nome").focus();
-      return;
+  if (!/^[A-Za-zÀ-ÿ\s]+$/.test(nomeInput)) {
+    alert("O nome deve conter apenas letras!");
+    document.getElementById("nome").focus();
+    return;
   }
 
   // validação do email
@@ -80,19 +97,18 @@ for (let id of camposObrigatorios) {
 
   // validação do telefone
 
-const telefoneLimpo = document
-  .getElementById("telefone")
-  .value.replace(/\D/g, "");
+  const telefoneLimpo = document
+    .getElementById("telefone")
+    .value.replace(/\D/g, "");
 
-if (telefoneLimpo.length !== 11) {
-  alert("O telefone deve conter 11 dígitos (DDD + número)!");
-  document.getElementById("telefone").focus();
-  return;
-}
+  if (telefoneLimpo.length !== 11) {
+    alert("O telefone deve conter 11 dígitos (DDD + número)!");
+    document.getElementById("telefone").focus();
+    return;
+  }
 
-// 🔥 FORMATAÇÃO AQUI
-const telefoneFormatado = `(${telefoneLimpo.substring(0, 2)}) ${telefoneLimpo.substring(2, 7)}-${telefoneLimpo.substring(7)}`;
-
+  // 🔥 FORMATAÇÃO AQUI
+  const telefoneFormatado = `(${telefoneLimpo.substring(0, 2)}) ${telefoneLimpo.substring(2, 7)}-${telefoneLimpo.substring(7)}`;
 
   const dados = {
     nome: document.getElementById("nome").value.trim().toUpperCase(),
@@ -100,7 +116,7 @@ const telefoneFormatado = `(${telefoneLimpo.substring(0, 2)}) ${telefoneLimpo.su
     telefone: telefoneFormatado,
     cpf: formatarCPF(document.getElementById("cpf").value),
 
-    cargo: document.getElementById("cargo").value,
+    cargo_id: parseInt(document.getElementById("cargo").value),
     setor: document.getElementById("setor").value,
     tipo_perfil: document.getElementById("tipo_perfil").value,
     tipo_contrato: document.getElementById("tipo_contrato").value,
