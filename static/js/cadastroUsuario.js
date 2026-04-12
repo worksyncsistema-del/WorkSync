@@ -23,12 +23,82 @@ function alternarJornada() {
   }
 }
 
+function formatarCPF(cpf) {
+  cpf = cpf.replace(/\D/g, ""); // remove tudo que não é número
+
+  if (cpf.length === 11) {
+    cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2");
+    cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2");
+    cpf = cpf.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  }
+
+  return cpf;
+}
+
 async function cadastrarUsuario() {
+
+const camposObrigatorios = [
+  "nome",
+  "email",
+  "cpf",
+  "telefone",
+  "cargo",
+  "setor",
+  "tipo_perfil",
+  "tipo_contrato",
+  "data_admissao",
+  "carga_horaria",
+  ];
+
+for (let id of camposObrigatorios) {
+  const valor = document.getElementById(id).value.trim();
+
+  if (!valor) {
+    alert(`O campo ${id} é obrigatório!`);
+    document.getElementById(id).focus();
+    return;
+  }
+  }
+
+  // validação do nome
+    const nomeInput = document.getElementById("nome").value.trim();
+
+    if (!/^[A-Za-zÀ-ÿ\s]+$/.test(nomeInput)) {
+      alert("O nome deve conter apenas letras!");
+      document.getElementById("nome").focus();
+      return;
+  }
+
+  // validação do email
+  const email = document.getElementById("email").value.trim();
+
+  if (!email.includes("@") || email.startsWith("@")) {
+    alert("O email deve conter '@' e não pode começar com ele!");
+    document.getElementById("email").focus();
+    return;
+  }
+
+  // validação do telefone
+
+const telefoneLimpo = document
+  .getElementById("telefone")
+  .value.replace(/\D/g, "");
+
+if (telefoneLimpo.length !== 11) {
+  alert("O telefone deve conter 11 dígitos (DDD + número)!");
+  document.getElementById("telefone").focus();
+  return;
+}
+
+// 🔥 FORMATAÇÃO AQUI
+const telefoneFormatado = `(${telefoneLimpo.substring(0, 2)}) ${telefoneLimpo.substring(2, 7)}-${telefoneLimpo.substring(7)}`;
+
+
   const dados = {
-    nome: document.getElementById("nome").value,
+    nome: document.getElementById("nome").value.trim().toUpperCase(),
     email: document.getElementById("email").value,
-    telefone: document.getElementById("telefone").value,
-    cpf: document.getElementById("cpf").value,
+    telefone: telefoneFormatado,
+    cpf: formatarCPF(document.getElementById("cpf").value),
 
     cargo: document.getElementById("cargo").value,
     setor: document.getElementById("setor").value,
@@ -41,11 +111,6 @@ async function cadastrarUsuario() {
     matricula: "AUTO-" + Math.floor(Math.random() * 10000),
     jornada: document.getElementById("tipoJornada").value,
   };
-
-  if (!dados.nome || !dados.email) {
-    alert("Preencha os campos obrigatórios");
-    return;
-  }
 
   const res = await fetch("http://127.0.0.1:5000/cadastrar_usuario", {
     method: "POST",
