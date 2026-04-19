@@ -1,13 +1,20 @@
 import { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity,
-  StyleSheet, StatusBar, KeyboardAvoidingView,
-  Platform, ScrollView, Alert, ActivityIndicator,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  StatusBar,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// ⚠️ Troque pelo IP da sua máquina na rede local
 const API_URL = 'http://192.168.0.100:5000';
 
 export default function LoginScreen() {
@@ -36,7 +43,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (!cpf || !senha) {
-      Alert.alert('Campos vazios', 'Preencha o CPF e a senha.');
+      Alert.alert('Campos vazios', 'Foram encontrados campos vazios. Tente novamente.');
       return;
     }
     if (!verificarCPF()) return;
@@ -57,12 +64,11 @@ export default function LoginScreen() {
       console.log('Resposta do servidor:', JSON.stringify(data));
 
       if (data.ok) {
-        // Salva os dados do usuário localmente
         await AsyncStorage.setItem('usuario', JSON.stringify({
           nome: data.nome,
           tipo: data.tipo,
         }));
-        router.replace('/(tabs)/index' as any);
+        router.replace('/(tabs)' as any);
       } else {
         Alert.alert('Erro no login', data.erro || 'Tente novamente.');
       }
@@ -75,77 +81,208 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={styles.page}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <StatusBar barStyle="light-content" backgroundColor="#0a0a0a" />
-      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+      <StatusBar barStyle="dark-content" backgroundColor="#F2F2F2" />
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
 
-        <View style={styles.header}>
-          <Text style={styles.logoWork}>WORK<Text style={styles.logoSync}>SYNC</Text></Text>
-        </View>
-
+        {/* Card */}
         <View style={styles.card}>
-          <TextInput
-            style={styles.input}
-            placeholder="CPF"
-            placeholderTextColor="#888"
-            keyboardType="numeric"
-            maxLength={14}
-            value={cpf}
-            onChangeText={mascaraCPF}
-          />
 
-          <View style={styles.passwordBox}>
-            <TextInput
-              style={[styles.input, styles.passwordInput]}
-              placeholder="Senha"
-              placeholderTextColor="#888"
-              secureTextEntry={!senhaVisivel}
-              maxLength={12}
-              value={senha}
-              onChangeText={setSenha}
-            />
-            <TouchableOpacity style={styles.eyeButton} onPress={() => setSenhaVisivel(!senhaVisivel)}>
-              <Text style={styles.eyeIcon}>{senhaVisivel ? '👁' : '🙈'}</Text>
-            </TouchableOpacity>
+          {/* Header azul */}
+          <View style={styles.header}>
+            <Text style={styles.headerText}>
+              <Text style={styles.headerWork}>WORK</Text>
+              <Text style={styles.headerSync}>SYNC</Text>
+            </Text>
           </View>
 
-          <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={carregando}>
-            {carregando
-              ? <ActivityIndicator color="#0a0a0a" />
-              : <Text style={styles.buttonText}>Entrar</Text>
-            }
-          </TouchableOpacity>
+          {/* Body */}
+          <View style={styles.body}>
 
-          <TouchableOpacity onPress={() => router.push('/recuperacaoSenha' as any)}>
-            <Text style={styles.forgotPassword}>Esqueci minha senha?</Text>
-          </TouchableOpacity>
+            {/* CPF */}
+            <TextInput
+              style={styles.input}
+              placeholder="CPF"
+              placeholderTextColor="#999"
+              keyboardType="numeric"
+              maxLength={14}
+              value={cpf}
+              onChangeText={mascaraCPF}
+            />
+
+            {/* Senha */}
+            <View style={styles.passwordBox}>
+              <TextInput
+                style={[styles.input, styles.passwordInput]}
+                placeholder="Senha"
+                placeholderTextColor="#999"
+                secureTextEntry={!senhaVisivel}
+                maxLength={12}
+                value={senha}
+                onChangeText={setSenha}
+              />
+              <TouchableOpacity
+                style={styles.eyeButton}
+                onPress={() => setSenhaVisivel(!senhaVisivel)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.eyeIcon}>{senhaVisivel ? '👁' : '🙈'}</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Botão */}
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleLogin}
+              disabled={carregando}
+              activeOpacity={0.85}
+            >
+              {carregando
+                ? <ActivityIndicator color="#fff" />
+                : <Text style={styles.buttonText}>Entrar</Text>
+              }
+            </TouchableOpacity>
+
+            {/* Esqueci senha */}
+            <TouchableOpacity onPress={() => router.push('/recuperacaoSenha' as any)}>
+              <Text style={styles.forgotPassword}>Esqueci minha senha?</Text>
+            </TouchableOpacity>
+
+          </View>
         </View>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Copyright WorkSync © 2026</Text>
-        </View>
+        {/* Footer */}
+        <Text style={styles.footer}>Copyright WorkSync © 2026</Text>
+
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a' },
-  scrollContent: { flexGrow: 1, justifyContent: 'space-between', alignItems: 'center', paddingVertical: 60, paddingHorizontal: 24 },
-  header: { alignItems: 'center', marginBottom: 48 },
-  logoWork: { fontSize: 38, letterSpacing: 6, fontWeight: '300', color: '#ffffff' },
-  logoSync: { fontSize: 38, letterSpacing: 6, fontWeight: '900', color: '#ffffff' },
-  card: { width: '100%', maxWidth: 380, backgroundColor: '#161616', borderRadius: 16, paddingHorizontal: 28, paddingVertical: 36, borderWidth: 1, borderColor: '#2a2a2a' },
-  input: { width: '100%', height: 52, backgroundColor: '#1e1e1e', borderWidth: 1, borderColor: '#333', borderRadius: 8, paddingHorizontal: 16, color: '#f0f0f0', fontSize: 15, marginBottom: 16 },
-  passwordBox: { position: 'relative', width: '100%' },
-  passwordInput: { paddingRight: 50 },
-  eyeButton: { position: 'absolute', right: 14, top: 14, padding: 4 },
-  eyeIcon: { fontSize: 18 },
-  button: { width: '100%', height: 52, backgroundColor: '#ffffff', borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginBottom: 20, marginTop: 4 },
-  buttonText: { color: '#0a0a0a', fontWeight: '700', fontSize: 15, letterSpacing: 1.5 },
-  forgotPassword: { textAlign: 'center', color: '#888', fontSize: 13, textDecorationLine: 'underline' },
-  footer: { marginTop: 48, alignItems: 'center' },
-  footerText: { color: '#444', fontSize: 12 },
+  // Fundo cinza igual ao body da web
+  page: {
+    flex: 1,
+    backgroundColor: '#F2F2F2',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: 24,
+  },
+
+  // Card branco com sombra
+  card: {
+    width: '100%',
+    maxWidth: 420,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+
+  // Header azul
+  header: {
+    backgroundColor: '#0F5C8C',
+    paddingVertical: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerText: {
+    fontSize: 30,
+    fontWeight: 'bold',
+  },
+  headerWork: {
+    color: '#000',
+    fontSize: 30,
+    fontWeight: 'bold',
+  },
+  headerSync: {
+    color: '#fff',
+    fontSize: 30,
+    fontWeight: 'bold',
+  },
+
+  // Body do card
+  body: {
+    padding: 40,
+    alignItems: 'center',
+  },
+
+  // Inputs com fundo cinza
+  input: {
+    width: '100%',
+    backgroundColor: '#F2F2F2',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    fontSize: 15,
+    color: '#333',
+    marginBottom: 15,
+  },
+
+  // Campo senha
+  passwordBox: {
+    position: 'relative',
+    width: '100%',
+  },
+  passwordInput: {
+    paddingRight: 40,
+    marginTop: 0,
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 10,
+    top: '20%',
+  },
+  eyeIcon: {
+    fontSize: 16,
+    color: '#777',
+  },
+
+  // Botão azul
+  button: {
+    width: '100%',
+    backgroundColor: '#0F5C8C',
+    borderRadius: 4,
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    marginBottom: 0,
+    minHeight: 44,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: '500',
+  },
+
+  // Link esqueci senha
+  forgotPassword: {
+    marginTop: 10,
+    fontSize: 13,
+    color: '#555',
+    textDecorationLine: 'underline',
+  },
+
+  // Footer
+  footer: {
+    marginTop: 20,
+    fontSize: 12,
+    color: '#999',
+  },
 });
